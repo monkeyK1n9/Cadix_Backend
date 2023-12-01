@@ -2,13 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+//routes
+import { loginRouter } from './src/routes/login';
+import { registerRouter } from './src/routes/register';
+import { startRouter } from './src/routes/start';
+
 dotenv.config();
 const app = express();
 
 const port = 8800;
-
-//routes
-
 
 dotenv.config();
 
@@ -23,3 +25,8 @@ mongoose.connect(process.env.MONGO_URL, {
 
 app.use(express.json());
 app.use(cors());
+
+//using the routes
+app.use("/login", loginRouter);
+app.use("/register", registerRouter);
+app.use("/start", startRouter);
