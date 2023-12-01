@@ -30,3 +30,9 @@ app.use(cors());
 app.use("/login", loginRouter);
 app.use("/register", registerRouter);
 app.use("/start", startRouter);
+
+
+//opening the port
+app.listen(port, () => {
+    console.log('Server listening on port: ' + port);
+})
