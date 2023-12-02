@@ -1,0 +1,50 @@
+import { randomUUID } from "crypto";
+import mongoose from "mongoose";
+
+const projectVersionSchema = new mongoose.Schema({
+    fileID: {
+        type: 'UUID',
+        default: () => randomUUID(),
+    },
+    fileURL: {
+        type: String,
+        required: true,
+    }
+
+}, {
+    timestamps: true
+})
+
+export const ProjectVersion = mongoose.model('ProjectVersion', projectVersionSchema);
+
+const projectTeamSchema = new mongoose.Schema({
+    teamID: {
+        type: 'UUID',
+        default: () => randomUUID(),
+        unique: true,
+    },
+    teamMembers: {
+        type: [String], // this will be array of email addresses
+    }
+}, {
+    timestamps: true
+});
+
+export const ProjectTeam = mongoose.model('ProjectTeam', projectTeamSchema);
+
+const projectSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    versions: {
+        type: [ProjectVersion],
+    },
+    teams: {
+        type: [ProjectTeam]
+    }
+}, {
+    timestamps: true
+});
+
+export const Project = mongoose.model('Project', projectSchema);
