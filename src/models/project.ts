@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import mongoose from "mongoose";
 
+// to handle different versions of a project
 const projectVersionSchema = new mongoose.Schema({
     fileID: {
         type: 'UUID',
@@ -17,6 +18,8 @@ const projectVersionSchema = new mongoose.Schema({
 
 export const ProjectVersion = mongoose.model('ProjectVersion', projectVersionSchema);
 
+
+// to handle the different teams a project can have like Architecture, Structural, with client, etc.
 const projectTeamSchema = new mongoose.Schema({
     teamID: {
         type: 'UUID',
@@ -32,6 +35,8 @@ const projectTeamSchema = new mongoose.Schema({
 
 export const ProjectTeam = mongoose.model('ProjectTeam', projectTeamSchema);
 
+
+// to handle the effective projectSchema
 const projectSchema = new mongoose.Schema({
     name: {
         type: String,
