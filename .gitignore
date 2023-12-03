@@ -4,4 +4,6 @@
 
 .env
 
+serviceAccount
+
 .DS_Store

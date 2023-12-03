@@ -7,11 +7,20 @@ import { loginRouter } from './src/routes/login';
 import { registerRouter } from './src/routes/register';
 import { startRouter } from './src/routes/start';
 import mongoose, { ConnectOptions } from 'mongoose';
+import { initializeApp } from 'firebase-admin/app';
+import { credential } from 'firebase-admin';
 
 dotenv.config();
 const app = express();
 
 dotenv.config();
+
+const serviceAccountKey = require("./serviceAccountKey.json")
+
+//initialize firebase
+initializeApp({
+    credential: credential.cert(serviceAccountKey)
+});
 
 
 mongoose.connect(process.env.MONGO_URL, {

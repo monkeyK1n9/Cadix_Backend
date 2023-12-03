@@ -40,7 +40,8 @@ export const ProjectTeam = mongoose.model('ProjectTeam', projectTeamSchema);
 const projectSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        default: () => "Project " + randomUUID()
     },
     versions: {
         type: [ProjectVersion],
