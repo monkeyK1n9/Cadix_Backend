@@ -3,7 +3,9 @@ import CryptoJS from 'crypto-js';
 import jwt from 'jsonwebtoken';
 
 /**
- * Logging a user with email and password
+ * Middleware for logging a user with email and password
+ * @param req request object
+ * @param res response object
  */
 export async function loginUser(req: any, res: any) {
     try {
@@ -40,6 +42,6 @@ export async function loginUser(req: any, res: any) {
         return res.status(200).json({  accessToken, ...userInfo });
     }
     catch (err) {
-        
+        return res.status(500).json({ message: "Failed to login user", error: err})
     }
 }

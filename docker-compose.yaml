@@ -5,10 +5,10 @@ services:
     image: mongo
     restart: always
     ports:
-      - 27017:27017
+      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: $MONGODB_USER
+      MONGO_INITDB_ROOT_PASSWORD: $MONGODB_PASSWORD
     volumes:
       - db:/data/db
 
@@ -17,11 +17,12 @@ services:
     restart: always
     ports:
       - 8081:8081
+      - MONGO_EXPRESS_UI_LOCAL_PORT:$MONGO_EXPRESS_UI_DOCKER_PORT
     environment:
       ME_CONFIG_MONGODB_ENABLE_ADMIN: true
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: password
-      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: $MONGODB_USER
+      ME_CONFIG_MONGODB_ADMINPASSWORD: $MONGODB_PASSWORD
+      ME_CONFIG_MONGODB_SERVER: $MONGODB_DOCKER_SERVER_NAME
 
 volumes:
   db:
