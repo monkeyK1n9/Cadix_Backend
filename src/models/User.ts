@@ -25,6 +25,10 @@ const UserSchema = new mongoose.Schema({
     projects: {
         type: [String],
         default: undefined,
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true,
