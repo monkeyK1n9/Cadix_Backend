@@ -4,6 +4,6 @@
 
 .env
 
-serviceAccount
+serviceAccountKey
 
 .DS_Store
