@@ -48,7 +48,8 @@ const projectSchema = new mongoose.Schema({
     },
     teams: {
         type: [ProjectTeam]
-    }
+    },
+    
 }, {
     timestamps: true
 });

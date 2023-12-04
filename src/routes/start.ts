@@ -6,24 +6,25 @@ import {
     getAllProjects,
     getProject
 } from "../middlewares/start";
+import { verify } from '../lib/verifyToken';
 
 
 const startRouter = router.Router();
 
 // CREATE PROJECT
-startRouter.post('/', createProject);
+startRouter.post('/', verify, createProject);
 
 // DELETE PROJECT
-startRouter.delete('/:id', deleteProject);
+startRouter.delete('/:id', verify, deleteProject);
 
 // UPDATE PROJECT
-startRouter.put('/:id', updateProject);
+startRouter.put('/:id', verify, updateProject);
 
 // GET PROJECTS
-startRouter.get('/', getAllProjects);
+startRouter.get('/', verify, getAllProjects);
 
 // GET PROJECT
-startRouter.get('/:id', getProject);
+startRouter.get('/:id', verify, getProject);
 
 
 export { startRouter };

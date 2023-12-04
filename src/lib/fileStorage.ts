@@ -8,10 +8,10 @@ import {getDownloadURL, getStorage} from 'firebase-admin/storage';
  * @param fileData can be string or buffer. It is the file received from POST request on client side
  * @returns fileURL string
  */
-async function storeFile(userId: string, fileID: string, fileData: string | Buffer) {
+export async function storeFile(userId: string, fileID: string, fileData: string | Buffer) {
     await getStorage().bucket(userId).file(fileID).save(fileData)
 
     const ref = await getStorage().bucket(userId).file(fileID)
 
-    return await getDownloadURL(ref);
+    return getDownloadURL(ref);
 }
