@@ -1,7 +1,4 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 export const verify = (req: any, res: any, next: any) => {
     const authHeader = req.headers?.token
@@ -11,7 +8,7 @@ export const verify = (req: any, res: any, next: any) => {
 
         jwt.verify(
             token, 
-            process.env.SECRET_KEY,
+            process.env.SECRET_KEY as string,
             (err: any, data: any) => {
                 if (err) return res.status(403).json({msg: "Token is not valid"})
 

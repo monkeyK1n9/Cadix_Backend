@@ -1,6 +1,7 @@
-import { User } from "../models/User";
+// import { User } from "../models/User";
 import CryptoJS from 'crypto-js';
 import jwt from 'jsonwebtoken';
+const User = require('../models/User');
 
 /**
  * Middleware for registering a user with email and password
@@ -8,10 +9,11 @@ import jwt from 'jsonwebtoken';
  * @param res response object
  */
 export async function registerUser(req: any, res: any) {
+    console.log(CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY as string).toString())
     const newUser = new User({
         username: req.body.username,
         email: req.body.email,
-        password: CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY).toString()
+        password: CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY as string).toString()
     })
 
     try {

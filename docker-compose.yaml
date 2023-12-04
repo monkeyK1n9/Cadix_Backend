@@ -9,6 +9,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: $MONGODB_USER
       MONGO_INITDB_ROOT_PASSWORD: $MONGODB_PASSWORD
+      MONGO_INITDB_DATABASE: $MONGODB_DATABASE
     volumes:
       - db:/data/db
 
@@ -16,8 +17,7 @@ services:
     image: mongo-express
     restart: always
     ports:
-      - 8081:8081
-      - MONGO_EXPRESS_UI_LOCAL_PORT:$MONGO_EXPRESS_UI_DOCKER_PORT
+      - $MONGO_EXPRESS_UI_LOCAL_PORT:$MONGO_EXPRESS_UI_DOCKER_PORT
     environment:
       ME_CONFIG_MONGODB_ENABLE_ADMIN: true
       ME_CONFIG_MONGODB_ADMINUSERNAME: $MONGODB_USER
@@ -26,3 +26,4 @@ services:
 
 volumes:
   db:
+    driver: local

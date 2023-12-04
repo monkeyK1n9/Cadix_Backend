@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 // to handle different versions of a project
 const projectVersionSchema = new mongoose.Schema({
     fileID: {
-        type: 'UUID',
+        type: mongoose.Schema.Types.UUID,
         default: () => randomUUID(),
     },
     fileURL: {
@@ -21,13 +21,21 @@ export const ProjectVersion = mongoose.model('ProjectVersion', projectVersionSch
 
 // to handle the different teams a project can have like Architecture, Structural, with client, etc.
 const projectTeamSchema = new mongoose.Schema({
+    projectID: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        required: true 
+    },
     teamID: {
-        type: 'UUID',
+        type: mongoose.Schema.Types.UUID,
         default: () => randomUUID(),
         unique: true,
     },
     teamMembers: {
         type: [String], // this will be array of email addresses
+        validate: {
+            validator: (value: string) => /\S+@\S+\.\S+/.test(value),
+            message: 'Invalid email address format',
+        },
     }
 }, {
     timestamps: true
@@ -43,13 +51,19 @@ const projectSchema = new mongoose.Schema({
         required: true,
         default: () => "Project " + randomUUID()
     },
-    versions: {
-        type: [ProjectVersion],
-    },
-    teams: {
-        type: [ProjectTeam]
-    },
-    
+    versions: [
+        { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'ProjectVersion' 
+        }
+    ],
+    teams: [
+        { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'ProjectTeam' 
+        }
+    ],
+
 }, {
     timestamps: true
 });

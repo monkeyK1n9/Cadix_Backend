@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve": "nodemon index.ts",
+    "serve": "NODE_ENV=development nodemon index.ts",
+    "start": "nodemon index.ts",
     "dev-docker-compose-up": "docker-compose --env-file ./.env.development up",
     "prod-docker-compose-up": "docker-compose --env-file ./.env.production up",
     "test": "echo \"Error: no test specified\" && exit 1"

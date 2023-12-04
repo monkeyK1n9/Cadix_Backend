@@ -1,6 +1,7 @@
-import { User } from "../models/User";
+// import { User } from "../models/User";
 import CryptoJS from 'crypto-js';
 import jwt from 'jsonwebtoken';
+const User = require('../models/User');
 
 /**
  * Middleware for logging a user with email and password
@@ -18,7 +19,7 @@ export async function loginUser(req: any, res: any) {
         }
 
         // decrypt the password
-        const decryptedPassword = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY).toString(CryptoJS.enc.Utf8);
+        const decryptedPassword = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY as string).toString(CryptoJS.enc.Utf8);
 
         // check for invalid password
         if (decryptedPassword !== req.body.password) {
@@ -30,7 +31,7 @@ export async function loginUser(req: any, res: any) {
             {
                 id: user._id
             },
-            process.env.SECRET_KEY, //sending the decrypting secret phrase
+            process.env.SECRET_KEY as string, //sending the decrypting secret phrase
             {
                 expiresIn: "5d"
             }
