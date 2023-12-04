@@ -6,9 +6,17 @@ export async function createProject(req: any, res: any) {
     try {
         const userId = req.data._id;
         const fileID = randomUUID();
-        const arrayBuffer = await (req.data.file as File).arrayBuffer(); // converting blob file to bufferArray
-        const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
-        const fileURL = await storeFile(userId, fileID, fileData)
+
+        // create project if there is a file from request or download empty ifc file and provide to the user
+        let fileURL;
+        if (req.data.file) {
+            const arrayBuffer = await (req.data.file as File).arrayBuffer(); // converting blob file to bufferArray
+            const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
+            fileURL = await storeFile(userId, fileID, fileData)
+        }
+        else {
+
+        }
 
         // create the first project version while creating the project
         const projectVersion = new ProjectVersion({
@@ -34,7 +42,12 @@ export async function createProject(req: any, res: any) {
 }
 
 export async function deleteProject() {
+    try {
+        // when deleting a project, we delete the project, the related teams and all message groups
+    }
+    catch (err) {
 
+    }
 }
 
 export async function updateProject() {
