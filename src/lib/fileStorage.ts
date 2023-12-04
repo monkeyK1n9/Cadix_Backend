@@ -26,6 +26,8 @@ export async function storeFile(userId: string, fileID: string, fileData: string
  * @returns fileURL string
  */
 export async function getEmptyFile(userId: string, fileID: string) {
+
+    // FIX THIS. the user should create a new file from the browser
     // we download empty ifc file and add it to user's storage bucket
     const fileRef = await getStorage().bucket().file("newIFCFile.ifc");
 

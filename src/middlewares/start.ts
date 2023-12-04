@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
-import { storeFile } from "../lib/fileStorage";
-import { Project, ProjectVersion } from "../models/Project";
+import { getEmptyFile, storeFile } from "../lib/fileStorage";
+import { Project, ProjectVersion } from "../models/project";
+import { IFCWriter } from "../utils/IFCWriter";
 
 export async function createProject(req: any, res: any) {
     try {
@@ -15,7 +16,15 @@ export async function createProject(req: any, res: any) {
             fileURL = await storeFile(userId, fileID, fileData)
         }
         else {
-
+            // if user didn't provide a file, we create an empty file and give him
+            // create file
+            const ifcFile = new IFCWriter(req.data.name, req.data.username)
+            await ifcFile.init(req.data.name, req.data.username);
+            
+            const createdFile = require("../assets/ifcFiles/newIFCFile.ifc");
+            const arrayBuffer = await (createdFile as File).arrayBuffer(); // converting blob file to bufferArray
+            const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
+            fileURL = await storeFile(userId, fileID, fileData)
         }
 
         // create the first project version while creating the project
