@@ -1,6 +1,35 @@
 import { randomUUID } from "crypto";
 import mongoose from "mongoose";
 
+// handle if user send message with attachements
+const uploadedFileSchema = new mongoose.Schema({
+  fileID: {
+    type: mongoose.Schema.Types.UUID,
+    default: () => randomUUID(),
+    required: true,
+    unique: true,
+  },
+  fileURL: {
+    type: String,
+    required: true,
+  },
+  senderID: {
+    type: String,
+    required: true,
+  },
+  fileType: {
+    type: String,
+    required: true,
+    enum: ['image', 'video', 'other'],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+export const UploadedFile = mongoose.model('UploadedFile', uploadedFileSchema);
+
 // handle the message groups
 const messageSchema = new mongoose.Schema({
   projectTeamID: {
