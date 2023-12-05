@@ -28,7 +28,22 @@ export async function registerUser(req: any, res: any) {
 
         // create new user
         const user = await newUser.save();
-        return res.status(200).json(user);
+
+        // create an access token and sending back to the client
+        const accessToken = jwt.sign(
+            {
+                id: user._id
+            },
+            process.env.SECRET_KEY as string, //sending the decrypting secret phrase
+            {
+                expiresIn: "5d"
+            }
+        )
+
+        // removing password from the data we send back to the client
+        const { password, ...userInfo } = user._doc;
+
+        return res.status(200).json({  accessToken, ...userInfo });
     }
     catch (err) {
         res.status(500).json({ message: "Failed to create user", error: err})

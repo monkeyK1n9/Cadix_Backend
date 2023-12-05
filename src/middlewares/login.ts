@@ -38,7 +38,7 @@ export async function loginUser(req: any, res: any) {
         )
 
         // removing password from the data we send back to the client
-        const { password, ...userInfo } = user
+        const { password, ...userInfo } = user._doc;
 
         return res.status(200).json({  accessToken, ...userInfo });
     }

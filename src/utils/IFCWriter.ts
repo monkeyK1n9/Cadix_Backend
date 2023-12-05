@@ -32,7 +32,7 @@ export class IFCWriter{
         const org = new WebIFC.IFC4.IfcOrganization(
             // this.maxExpressId++,
             null,
-            new WebIFC.IFC4.IfcLabel('Mazri'),
+            new WebIFC.IFC4.IfcLabel(author),
             null,null,null
         )
 
@@ -191,7 +191,7 @@ export class IFCWriter{
 
         this.IFCAPI.WriteLine( this.modelId,buildingStorey );
 
-        relAggr.expressID = this.maxExpressId++
+        // relAggr.expressID = this.maxExpressId++
         relAggr.GlobalId = this.generateGlobalId();
         relAggr.RelatedObjects = [buildingStorey];
         relAggr.RelatingObject = building;
