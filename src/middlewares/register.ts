@@ -1,6 +1,8 @@
 // import { User } from "../models/User";
 import CryptoJS from 'crypto-js';
 import jwt from 'jsonwebtoken';
+import { sendMail } from '../lib/sendMail';
+import { UserOTPVerification } from '../models/UserOTPVerification';
 const User = require('../models/User');
 
 /**
@@ -55,13 +57,35 @@ export async function registerUser(req: any, res: any) {
 
 
 // send OTP to user for email validation
-async function sendOTPVerificationEmail (result: any) {
-    try {
-        const otp = Math.floor((Math.random() * 9000) + 1000)
+async function sendOTPVerificationEmail (user: any) {
+    // generate otp
+    const otp = Math.floor((Math.random() * 9000) + 1000).toString();
 
-        
-    }
-    catch (err) {
+    // hash the otp to save in database
+    const newUserOTPVerification = new UserOTPVerification({
+        otp: CryptoJS.AES.encrypt(otp, process.env.SECRET_KEY as string).toString(),
+        userId: user._id,
+        createdAt: Date.now(),
+        expiredAt: Date.now() + 3600000 // expire code in 1 hour
+    })
 
-    }
+    // store otp in database
+    await newUserOTPVerification.save();
+
+    // send mail to user
+    await sendMail(
+        [
+            {
+                name: user.username,
+                email: user.email
+            }
+        ],
+        1, //templateId in Brevo
+        {
+            name: user.username,
+            email: user.email
+        }
+    )
+
+    console.log("Successfully sent OTP verification email")
 }
