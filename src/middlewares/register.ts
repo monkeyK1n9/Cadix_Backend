@@ -29,6 +29,9 @@ export async function registerUser(req: any, res: any) {
         // create new user
         const user = await newUser.save();
 
+        // handle account email verification
+        await sendOTPVerificationEmail(user);
+
         // create an access token and sending back to the client
         const accessToken = jwt.sign(
             {
@@ -47,5 +50,18 @@ export async function registerUser(req: any, res: any) {
     }
     catch (err) {
         res.status(500).json({ message: "Failed to create user", error: err})
+    }
+}
+
+
+// send OTP to user for email validation
+async function sendOTPVerificationEmail (result: any) {
+    try {
+        const otp = Math.floor((Math.random() * 9000) + 1000)
+
+        
+    }
+    catch (err) {
+
     }
 }

@@ -28,7 +28,6 @@
   "homepage": "https://github.com/monkeyK1n9/Cadix_Backend#readme",
   "dependencies": {
     "axios": "^1.6.2",
-    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "dotenv": "^16.3.1",
@@ -37,6 +36,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.1",
     "nodemon": "^3.0.1",
+    "sib-api-v3-sdk": "^8.5.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "web-ifc": "^0.0.46"
