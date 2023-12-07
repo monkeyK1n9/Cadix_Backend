@@ -1,6 +1,5 @@
 // import { User } from "../models/User";
 import CryptoJS from 'crypto-js';
-import jwt from 'jsonwebtoken';
 import { sendMail } from '../lib/sendMail';
 import { UserOTPVerification } from '../models/UserOTPVerification';
 const User = require('../models/User');
@@ -18,40 +17,64 @@ export async function registerUser(req: any, res: any) {
         password: CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY as string).toString()
     })
 
+    let user;
+
     try {
-        // reject request if user email already exists in the database
+        // reject request if user email already exists in the database and is verified, otherwise, recreate
         const checkUser = await User.findOne({
             email: req.body.email,
         })
 
         if (checkUser) {
-            return res.status(403).json({ message: "User already exists" });
+            if (checkUser.isVerified) {
+                //rejecting if user already exists in the database and is verified
+                return res.status(403).json({ message: "User already exists" });
+            }
+            else {
+                console.log("User already exists but not verified");
+
+                //if user exists and is not verified we update it
+                user = await User.findOneAndUpdate({
+                    username: req.body.username,
+                    email: req.body.email,
+                    password: CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY as string).toString()
+                })
+
+                // handle account email verification
+                await sendOTPVerificationEmail(user);
+            
+
+                return res.status(200).json({  
+                    status: 'PENDING',
+                    message: "Verification otp email sent",
+                    data: {
+                        userId: user._id,
+                        email: user.email
+                    }
+                });
+            }
         }
 
         // create new user
-        const user = await newUser.save();
+        user = await newUser.save();
 
         // handle account email verification
         await sendOTPVerificationEmail(user);
+       
 
-        // create an access token and sending back to the client
-        const accessToken = jwt.sign(
-            {
-                id: user._id
-            },
-            process.env.SECRET_KEY as string, //sending the decrypting secret phrase
-            {
-                expiresIn: "5d"
+        return res.status(200).json({  
+            status: 'PENDING',
+            message: "Verification otp email sent",
+            data: {
+                userId: user._id,
+                email: user.email
             }
-        )
-
-        // removing password from the data we send back to the client
-        const { password, ...userInfo } = user._doc;
-
-        return res.status(200).json({  accessToken, ...userInfo });
+        });
     }
     catch (err) {
-        res.status(500).json({ message: "Failed to create user", error: err})
+        console.log("Error: ", err);
+
+        res.status(500).json({ message: "Something went wrong. Failed to create user", error: err})
     }
 }
 
@@ -83,7 +106,7 @@ async function sendOTPVerificationEmail (user: any) {
         1, //templateId in Brevo
         {
             name: user.username,
-            email: user.email
+            otp: otp
         }
     )
 

@@ -1,9 +1,10 @@
-
-const SibApiV3Sdk = require('sib-api-v3-sdk');
-const defaultClient = SibApiV3Sdk.ApiClient.instance;
+import dotenv from 'dotenv';
+var SibApiV3Sdk = require('sib-api-v3-sdk');
+var defaultClient = SibApiV3Sdk.ApiClient.instance;
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 // Configure API Key authorization with api key
-const apiKey = defaultClient.authentication['api-key'];
+var apiKey = defaultClient.authentications['api-key'];
 apiKey.apiKey = process.env.BREVO_API_KEY;
 
 type Receiver = {
@@ -16,31 +17,25 @@ export async function sendMail(
     templateId: number,
     params: any
 ) {
-    
-    try {
+    console.log(process.env.BREVO_API_KEY)
+    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+    let sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); // create container to take mail options to be sent
 
-        const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-        let sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); // create container to take mail options to be sent
-    
-    
-        sendSmtpEmail = {
-            to: receiver,
-            templateId,
-            params,
-            headers: {
-                'X-Mailin-custom': 'custom_header_1:custom_value_1|custom_header_2:custom_value_2',
-                'accept': 'application/json',
-                'content-type': 'application/json',
-                'api-key': process.env.BREVO_API_KEY
-            }
+
+    sendSmtpEmail = {
+        to: receiver,
+        templateId: templateId,
+        params: params,
+        headers: {
+            'X-Mailin-custom': 'custom_header_1:custom_value_1|custom_header_2:custom_value_2', 
+            'accept': 'application/json',
+            'content-type': 'application/json',
         }
-    
-        const data = await apiInstance.sendTransacEmail(sendSmtpEmail)
+    }
 
-        console.log("Successfully sent email with data: " + data);
-    }
-    catch (err) {
-        console.log("Failed to send mail with error: " + err)
-    }
+    const data = await apiInstance.sendTransacEmail(sendSmtpEmail)
+
+    console.log("Successfully sent email with data: " + data);
+
 
 }

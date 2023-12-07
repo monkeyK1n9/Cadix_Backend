@@ -11,7 +11,7 @@ import { registerRouter } from './src/routes/register';
 import { verifyOTPRouter } from './src/routes/verifyotp';
 import { startRouter } from './src/routes/start';
 
-dotenv.config();
+// dotenv.config();
 const app = express();
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
