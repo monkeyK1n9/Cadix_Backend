@@ -1,14 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import { initializeApp } from 'firebase-admin/app';
+import { credential } from 'firebase-admin';
 
 //routes
 import { loginRouter } from './src/routes/login';
 import { registerRouter } from './src/routes/register';
+import { verifyOTPRouter } from './src/routes/verifyotp';
 import { startRouter } from './src/routes/start';
-import mongoose, { ConnectOptions } from 'mongoose';
-import { initializeApp } from 'firebase-admin/app';
-import { credential } from 'firebase-admin';
 
 dotenv.config();
 const app = express();
@@ -34,6 +35,7 @@ app.use(cors());
 //using the routes
 app.use("/api/v1/login", loginRouter);
 app.use("/api/v1/register", registerRouter);
+app.use("/api/v1/verifyotp", verifyOTPRouter)
 app.use("/api/v1/start", startRouter);
 
 
