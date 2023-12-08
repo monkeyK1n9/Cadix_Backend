@@ -5,7 +5,7 @@ import { UserOTPVerification } from '../models/UserOTPVerification';
 const User = require('../models/User');
 
 /**
- * Middleware for registering a user with email and password
+ * Middleware for registering a user and generating an OTP to be sent by mail and validated
  * @param req request object
  * @param res response object
  */

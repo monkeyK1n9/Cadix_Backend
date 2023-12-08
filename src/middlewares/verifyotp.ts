@@ -2,7 +2,11 @@ import jwt from 'jsonwebtoken';
 import { UserOTPVerification } from '../models/UserOTPVerification';
 const User = require('../models/User');
 
-
+/**
+ * Middleware to verify the otp the user received by mail and proceed with authentication
+ * @param req request object
+ * @param res response object
+ */
 export async function verifyOTP(req: any, res: any) {
     try {
 
