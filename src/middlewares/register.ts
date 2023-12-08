@@ -84,6 +84,7 @@ async function sendOTPVerificationEmail (user: any) {
     // generate otp
     const otp = Math.floor((Math.random() * 9000) + 1000).toString();
 
+    console.log(process.env.SECRET_KEY);
     // hash the otp to save in database
     const newUserOTPVerification = new UserOTPVerification({
         otp: CryptoJS.AES.encrypt(otp, process.env.SECRET_KEY as string).toString(),

@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import CryptoJS from 'crypto-js';
 import { UserOTPVerification } from '../models/UserOTPVerification';
 const User = require('../models/User');
 
@@ -15,8 +16,12 @@ export async function verifyOTP(req: any, res: any) {
             throw new Error("Empty otp defails are not allowed")
         }
 
-        const userOTPVerificationRecords = await UserOTPVerification.find({
+        const userOTPVerificationRecords = await UserOTPVerification
+        .find({
             userId
+        })
+        .sort({
+            createdAt: -1 //sort in descending order. Newest first.
         })
 
         // check if the user has otp recodrd in database
@@ -28,9 +33,9 @@ export async function verifyOTP(req: any, res: any) {
             // user otp record exists
             const userOTPRecord = userOTPVerificationRecords[0];
             const encryptedOTP = userOTPVerificationRecords[0].otp;
-
+            
             // check if the otp is still valid after the time passed ( we allowed 60 mins)
-            if (userOTPRecord.expiredAt.getTime() < Date.now()){
+            if (userOTPRecord.expiredAt.getTime() < new Date().getTime()){
                 // the otp has expired, we delete all user's records
                 await UserOTPVerification.deleteMany({
                     userId
@@ -40,7 +45,8 @@ export async function verifyOTP(req: any, res: any) {
             }
             else {
                 // if time validity is correct, we compare the receive OTP and the one in the database
-                const decryptedOTP = CryptoJS.AES.decrypt(encryptedOTP, process.env.SECRET_KEY as string);
+                const decryptedOTP = CryptoJS.AES.decrypt(encryptedOTP, process.env.SECRET_KEY as string).toString(CryptoJS.enc.Utf8);
+                
 
                 if (otp != decryptedOTP) {
                     // supplied code is invalid
@@ -59,7 +65,7 @@ export async function verifyOTP(req: any, res: any) {
                     })
 
                     // we fetch the stored user in database
-                    const storedUser = User.findOne({
+                    const storedUser = await User.findOne({
                         _id: userId
                     })
                 
