@@ -3,12 +3,6 @@ import mongoose from "mongoose";
 
 // handle if user send message with attachements
 const uploadedFileSchema = new mongoose.Schema({
-    fileId: {
-        type: mongoose.Schema.Types.UUID,
-        default: () => randomUUID(),
-        required: true,
-        unique: true,
-    },
     fileURL: {
         type: String, // linked to file stored in storage (firebase)
         required: true,
@@ -21,7 +15,12 @@ const uploadedFileSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: ['image', 'video', 'other'], // TODO: modify the filetype
-    }  
+    },
+    projectTeamId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ProjectTeam',
+        required: true,
+    },
 }, {
     timestamps: true
 });
@@ -45,7 +44,7 @@ const messageSchema = new mongoose.Schema({
     attachments: [
         {
             fileId: {
-                type: mongoose.Schema.Types.UUID,
+                type: mongoose.Schema.Types.ObjectId,
                 ref: 'UploadedFile',
             },
             fileType: {

@@ -4,17 +4,17 @@ import axios from 'axios';
 
 /**
  * Function to store file in firebase storage
- * @param userId user identifier in database
  * @param fileID file generated ID in database
+ * @param fileStoragePath where to store the file, usually of the form ${userId}/.../...
  * @param fileData can be string or buffer. It is the file received from POST request on client side
  * @returns fileURL string
  */
-export async function storeFile(userId: string, fileID: string, projectVersionNumber: string | number, fileData: string | Buffer) {
+export async function storeFile(fileID: string, fileStoragePath: string, fileData: string | Buffer) {
     //store file
-    await getStorage().bucket(`${userId}/${projectVersionNumber}`).file(fileID).save(fileData)
+    await getStorage().bucket(fileStoragePath).file(fileID).save(fileData)
 
     // get reference of stored file to obtain download URL
-    const ref = await getStorage().bucket(`${userId}/${projectVersionNumber}`).file(fileID)
+    const ref = await getStorage().bucket(fileStoragePath).file(fileID)
 
     return getDownloadURL(ref);
 }

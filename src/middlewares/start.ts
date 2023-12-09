@@ -1,6 +1,9 @@
 import { randomUUID } from "crypto";
 import { getEmptyFile, storeFile } from "../lib/fileStorage";
 import { Project, ProjectTeam, ProjectVersion } from "../models/project";
+import {getDownloadURL, getStorage} from 'firebase-admin/storage';
+import { Message, UploadedFile } from "../models/Message";
+
 
 /**
  * Middleware to create a new project in database and saving the new file created
@@ -18,7 +21,8 @@ export async function createProject(req: any, res: any) {
             const arrayBuffer = await (req.data.file as File).arrayBuffer(); // converting blob file to bufferArray
             const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
             const versionNumber = 1;
-            fileURL = await storeFile(userId, fileId, versionNumber, fileData)
+            const fileStoragePath = `${fileId}/${versionNumber}`
+            fileURL = await storeFile(fileId, fileStoragePath, fileData)
 
             // create the first project version while creating the project
             const newProjectVersion = new ProjectVersion({
@@ -33,7 +37,9 @@ export async function createProject(req: any, res: any) {
                 versions: [
                     projectVersion._id, // first version on creation
                 ],
-                teams: [] // no team on creation
+                teams: [], // no team on creation
+                projectAdmins: [userId], // the first project admin is the creator of the project
+                createdBy: userId
             })
 
             const project = await newProject.save();
@@ -59,7 +65,7 @@ export async function createProject(req: any, res: any) {
 export async function deleteProject(req: any, res: any) {
     try {
         // when deleting a project, we delete the project, the related teams and all message groups
-        const { projectId } = req.data;
+        const { projectId, userId } = req.data;
 
         const project = await Project.findOne({
             _id: projectId
@@ -70,18 +76,51 @@ export async function deleteProject(req: any, res: any) {
             throw new Error("Project not found, cannot delete project.")
         }
         else {
+            // check if user is authorized (a projectAdmin) to delete the project
+            if (!project.projectAdmins.includes(userId)) {
+                throw new Error("You are not authorized to delete this project")
+            }
+
             // we delete the related project teams, project versions, messages and all chat files associated with the project
 
-            // 1- delete all project teams
+            // 1- delete all messages and UploadFile
+            if (project.teams?.length >= 0) {
+                for (let i = 0; i < project.teams.length; i++) {
+                    await Message.deleteMany({
+                        projectTeamId: project.teams[i]
+                    })
+                    await UploadedFile.deleteMany({
+                        projectTeamId: project.teams[i]
+                    })
+                }
+            }
+            
+
+            // 2- delete project versions and files versions and messages attachement files
+            if (project.versions?.length >= 0) {
+                for (let i = 0; i < project.versions.length; i++) {
+                    await ProjectVersion.deleteOne({
+                        _id: project.versions[i]
+                    })
+                }
+            }
+            await getStorage().bucket(project.createdBy).delete();
+
+            // 3- delete all project teams
             if (project.teams?.length >= 0) {
                 for (let i = 0; i < project.teams.length; i++) {
                     await ProjectTeam.deleteOne({
-                        teamId: project.teams[i]._id
+                        _id: project.teams[i]
                     })
                 }
             }
 
-            // 2- delete project versions and files
+            // 4- finally delete the project
+            await Project.deleteOne({
+                _id: project._id
+            })
+
+            return res.status(200).json({ message: "Successfully deleted project and related files." })
 
         }
     }

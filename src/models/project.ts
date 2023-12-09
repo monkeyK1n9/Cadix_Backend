@@ -25,11 +25,12 @@ const projectTeamSchema = new mongoose.Schema({
         required: true 
     },
     teamMembers: {
-        type: [String], // this will be array of email addresses
-        validate: {
-            validator: (value: string) => /\S+@\S+\.\S+/.test(value),
-            message: 'Invalid email address format',
-        },
+        type: [String], // this will be array of users _id
+        required: true,
+    },
+    groupAdmins: {
+        type: [String], // this will be array of group admins' user _id
+        required: false
     }
 }, {
     timestamps: true
@@ -57,7 +58,16 @@ const projectSchema = new mongoose.Schema({
             ref: 'ProjectTeam' 
         }
     ],
-
+    projectAdmins: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
+    createdBy: { 
+        type: String,  // the creator of the project
+        required: true
+    }
 }, {
     timestamps: true
 });
