@@ -9,12 +9,12 @@ import axios from 'axios';
  * @param fileData can be string or buffer. It is the file received from POST request on client side
  * @returns fileURL string
  */
-export async function storeFile(userId: string, fileID: string, fileData: string | Buffer) {
+export async function storeFile(userId: string, fileID: string, projectVersionNumber: string | number, fileData: string | Buffer) {
     //store file
-    await getStorage().bucket(userId).file(fileID).save(fileData)
+    await getStorage().bucket(`${userId}/${projectVersionNumber}`).file(fileID).save(fileData)
 
     // get reference of stored file to obtain download URL
-    const ref = await getStorage().bucket(userId).file(fileID)
+    const ref = await getStorage().bucket(`${userId}/${projectVersionNumber}`).file(fileID)
 
     return getDownloadURL(ref);
 }

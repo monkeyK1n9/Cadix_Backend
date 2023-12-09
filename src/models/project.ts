@@ -3,15 +3,14 @@ import mongoose from "mongoose";
 
 // to handle different versions of a project
 const projectVersionSchema = new mongoose.Schema({
-    fileId: {
-        type: mongoose.Schema.Types.UUID,
-        default: () => randomUUID(),
-    },
     fileURL: {
         type: String,
         required: true,
+    },
+    versionNumber: {
+        type: Number,
+        required: true,
     }
-
 }, {
     timestamps: true
 })
@@ -24,11 +23,6 @@ const projectTeamSchema = new mongoose.Schema({
     projectId: { 
         type: mongoose.Schema.Types.ObjectId, 
         required: true 
-    },
-    teamId: {
-        type: mongoose.Schema.Types.UUID,
-        default: () => randomUUID(),
-        unique: true,
     },
     teamMembers: {
         type: [String], // this will be array of email addresses
@@ -49,7 +43,7 @@ const projectSchema = new mongoose.Schema({
     filename: {
         type: String,
         required: true,
-        default: () => "Project " + randomUUID()
+        default: () => "Project-" + randomUUID()
     },
     versions: [
         { 
