@@ -19,27 +19,27 @@ export async function storeFile(fileID: string, fileStoragePath: string, fileDat
     return getDownloadURL(ref);
 }
 
-/**
- * Function to create a new file in the user's bucket from empty IFC file template
- * @param userId user identifier in database
- * @param fileID file generated ID in database
- * @returns fileURL string
- */
-export async function getEmptyFile(userId: string, fileID: string) {
+// /**
+//  * Function to create a new file in the user's bucket from empty IFC file template
+//  * @param userId user identifier in database
+//  * @param fileID file generated ID in database
+//  * @returns fileURL string
+//  */
+// export async function getEmptyFile(userId: string, fileID: string) {
 
-    // FIX THIS. the user should create a new file from the browser
-    // we download empty ifc file and add it to user's storage bucket
-    const fileRef = await getStorage().bucket().file("newIFCFile.ifc");
+//     // FIX THIS. the user should create a new file from the browser
+//     // we download empty ifc file and add it to user's storage bucket
+//     const fileRef = await getStorage().bucket().file("newIFCFile.ifc");
 
-    const fileURL = await getDownloadURL(fileRef);
-    const response = await axios.get(fileURL,  { responseType: 'arraybuffer' });
-    const buffer = Buffer.from(response.data);
+//     const fileURL = await getDownloadURL(fileRef);
+//     const response = await axios.get(fileURL,  { responseType: 'arraybuffer' });
+//     const buffer = Buffer.from(response.data);
 
-    // store file in user's storage bucket
-    await getStorage().bucket(userId).file(fileID).save(buffer);
+//     // store file in user's storage bucket
+//     await getStorage().bucket(userId).file(fileID).save(buffer);
 
-    // get reference of stored file to obtain download URL
-    const newFileRef = await getStorage().bucket(userId).file(fileID)
+//     // get reference of stored file to obtain download URL
+//     const newFileRef = await getStorage().bucket(userId).file(fileID)
 
-    return getDownloadURL(newFileRef);
-}
+//     return getDownloadURL(newFileRef);
+// }
