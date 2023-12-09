@@ -58,9 +58,9 @@ export async function createProject(req: any, res: any) {
 }
 
 /**
- * 
- * @param req 
- * @param res 
+ * Middleware to delete recursively the project, the related teams, project versions, uploaded files in chats, and messages
+ * @param req Request object
+ * @param res Response object
  */
 export async function deleteProject(req: any, res: any) {
     try {
@@ -94,7 +94,6 @@ export async function deleteProject(req: any, res: any) {
                     })
                 }
             }
-            
 
             // 2- delete project versions and files versions and messages attachement files
             if (project.versions?.length >= 0) {
