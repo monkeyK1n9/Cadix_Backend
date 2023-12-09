@@ -11,8 +11,8 @@ export const verify = (req: any, res: any, next: any) => {
             process.env.SECRET_KEY as string,
             (err: any, data: any) => {
                 if (err) return res.status(403).json({msg: "Token is not valid"})
-
-                req.data = data;
+                
+                req.data = req.body;
 
                 next();
             }

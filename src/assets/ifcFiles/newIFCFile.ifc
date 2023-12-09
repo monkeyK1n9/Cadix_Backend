@@ -1,0 +1,29 @@
+ISO-10303-21;
+HEADER;
+/******************************************************
+* STEP Physical File produced by: IFCjs WebIfc 0.0.46
+* Module: web-ifc/IfcLoader
+* Version: 0.0.46
+* Source: https://github.com/IFCjs/web-ifc
+* Issues: https://github.com/IFCjs/web-ifc/issues
+******************************************************/
+FILE_DESCRIPTION(('IFC Model'),'2;1');
+FILE_NAME('filename','2023-12-08T23:50:54',('author'),(),'ifcjs/web-ifc-api','ifcjs/web-ifc-api',$);
+FILE_SCHEMA(('IFC4'));
+ENDSEC;
+DATA;
+#1=IFCORGANIZATION($,'king',$,$,$);
+#2=IFCAPPLICATION(#1,'0.0.1','my application','app');
+#3=IFCSIUNIT(#0,.LENGTHUNIT.,.MILLI.,.METRE.);
+#4=IFCUNITASSIGNMENT((#3));
+#5=IFCCARTESIANPOINT((0.,0.,1.));
+#6=IFCDIRECTION((0.,0.,1.));
+#7=IFCAXIS2PLACEMENT3D(#5,$,$);
+#8=IFCGEOMETRICREPRESENTATIONCONTEXT('3D','Model',3,$,#7,#6);
+#9=IFCPROJECT('f435f7cc-e96a-4398-8a1e-fae7d212bfa3',$,'project','project desc',$,$,$,(#8),#4);
+#10=IFCSITE('b08dc780-ba02-4f90-ba9f-87061ecdeba4',$,'my site','',$,$,$,$,$,$,$,$,$,$);
+#11=IFCRELAGGREGATES('86ef2019-1034-4855-a603-ef6dc0f28286',$,$,$,#9,(#10));
+#12=IFCBUILDING('9ba67d3e-2520-4b95-a825-518121197c3d',$,'building','',$,$,$,$,$,$,$,$);
+#13=IFCBUILDINGSTOREY('67bf8b47-d123-45b9-9a41-639634faadf0',$,'Level 0','Datum',$,$,$,$,$,0.);
+ENDSEC;
+END-ISO-10303-21;

@@ -23,8 +23,7 @@ initializeApp({
     credential: credential.cert(serviceAccountKey)
 });
 
-console.log(process.env.MONGO_URL)
-console.log(process.env.NODE_ENV)
+
 mongoose.connect(process.env.MONGO_URL as string)
 .then(() => console.log("Connected to MongoDB..."))
 .catch((err: Error) => console.log("Failed to connect to MongoDB with error: " + err));

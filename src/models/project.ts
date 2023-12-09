@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 // to handle different versions of a project
 const projectVersionSchema = new mongoose.Schema({
-    fileID: {
+    fileId: {
         type: mongoose.Schema.Types.UUID,
         default: () => randomUUID(),
     },
@@ -21,11 +21,11 @@ export const ProjectVersion = mongoose.model('ProjectVersion', projectVersionSch
 
 // to handle the different teams a project can have like Architecture, Structural, with client, etc.
 const projectTeamSchema = new mongoose.Schema({
-    projectID: { 
+    projectId: { 
         type: mongoose.Schema.Types.ObjectId, 
         required: true 
     },
-    teamID: {
+    teamId: {
         type: mongoose.Schema.Types.UUID,
         default: () => randomUUID(),
         unique: true,
@@ -46,7 +46,7 @@ export const ProjectTeam = mongoose.model('ProjectTeam', projectTeamSchema);
 
 // to handle the effective projectSchema
 const projectSchema = new mongoose.Schema({
-    name: {
+    filename: {
         type: String,
         required: true,
         default: () => "Project " + randomUUID()

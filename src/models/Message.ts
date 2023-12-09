@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 // handle if user send message with attachements
 const uploadedFileSchema = new mongoose.Schema({
-    fileID: {
+    fileId: {
         type: mongoose.Schema.Types.UUID,
         default: () => randomUUID(),
         required: true,
@@ -13,7 +13,7 @@ const uploadedFileSchema = new mongoose.Schema({
         type: String, // linked to file stored in storage (firebase)
         required: true,
     },
-    senderID: {
+    senderId: {
         type: String, // user ID
         required: true,
     },
@@ -30,12 +30,12 @@ export const UploadedFile = mongoose.model('UploadedFile', uploadedFileSchema);
 
 // handle the message groups
 const messageSchema = new mongoose.Schema({
-    projectTeamID: {
+    projectTeamId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ProjectTeam',
         required: true,
     },
-    senderID: {
+    senderId: {
         type: String, // User ID
         required: true,
     },
@@ -44,7 +44,7 @@ const messageSchema = new mongoose.Schema({
     },
     attachments: [
         {
-            fileID: {
+            fileId: {
                 type: mongoose.Schema.Types.UUID,
                 ref: 'UploadedFile',
             },
