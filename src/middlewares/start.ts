@@ -201,18 +201,34 @@ export async function getAllProjects(req: any, res: any) {
     }
 }
 
+/**
+ * Middleware to get a project if the user is authorized to see it.
+ * @param req Request object
+ * @param res Response object
+ */
 export async function getProject(req: any, res: any) {
     try {
         const { userId } = req.body;
         const { projectId } = req.params
 
-        // we fetch the project
+        // we fetch the project matching any possible userId included as a projectAdmin, teamMember of groupAdmin
         const project = await Project.findOne({
-            _id: projectId
-        });
+            _id: projectId,
+            $or: [
+                { 'projectAdmins': userId },
+                { 'teams.teamMembers': userId },
+                { 'teams.groupAdmins': userId }
+            ]
+        })
 
-        // we check if user is authorized to see it
-
+        // we check if project exists 
+        if(!project) {
+            throw new Error("Project not found");
+        }
+        else {
+            // we send the project to the user
+            return res.status(200).json(project);
+        }
     }
     catch(err: any) {
         return res.json({ message: "Failed to fetch projects: " + err})
