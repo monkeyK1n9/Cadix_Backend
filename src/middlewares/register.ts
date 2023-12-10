@@ -34,11 +34,19 @@ export async function registerUser(req: any, res: any) {
                 console.log("User already exists but not verified");
 
                 //if user exists and is not verified we update it
-                user = await User.findOneAndUpdate({
-                    username: req.body.username,
-                    email: req.body.email,
-                    password: CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY as string).toString()
-                })
+                user = await User.findOneAndUpdate(
+                    {
+                        email: req.body.email, // we filter user by email and update it
+                    }, 
+                    {
+                        username: req.body.username,
+                        email: req.body.email,
+                        password: CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY as string).toString()
+                    },
+                    {
+                        new: true, // we use this to return the updated document
+                    }
+                )
 
                 // handle account email verification
                 await sendOTPVerificationEmail(user);

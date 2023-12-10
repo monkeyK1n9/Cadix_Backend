@@ -33,7 +33,8 @@ export async function createProject(req: any, res: any) {
             const projectVersion = await newProjectVersion.save();
 
             const newProject = new Project({
-                name: req.data.projectName, //provided by user
+                filename: req.data.projectName, //provided by user
+                description: "",
                 versions: [
                     projectVersion._id, // first version on creation
                 ],
@@ -53,7 +54,7 @@ export async function createProject(req: any, res: any) {
 
     }
     catch (err: any) {
-        res.status(500).json({ message: "Error creating project: " + err.message})
+        res.status(500).json({ message: "Error creating project: " + err})
     }
 }
 
@@ -128,15 +129,79 @@ export async function deleteProject(req: any, res: any) {
     }
 }
 
-export async function updateProject() {
+/**
+ * Middleware to update a project if the user has authorization to do so.
+ * @param req Request object
+ * @param res Response object
+ */
+export async function updateProject(req: any, res: any) {
+    try {
+        const { projectId, userId } = req.body;
 
+        const project = await Project.findOne({
+            _id: projectId
+        });
+
+        // check if project exists
+        if(!project) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+
+        // only a project admin should be allowed to update the project
+        if(!project.projectAdmins?.includes(userId)) {
+            throw new Error("You are not authorized to update this project.");
+        }
+        else {
+            // we update the project
+            for(const [key, value] of Object.entries(project)) {
+                if(key == "createdBy") continue; // we won't update the project creator
+
+                await Project.findOneAndUpdate(
+                    {
+                        _id: projectId // we filter by project Id
+                    },
+                    {
+                        [key]: value    // we update the key value pair
+                    }
+                )
+            }
+
+            const newProject = await Project.findOne({
+                _id: projectId
+            })
+
+            return res.status(200).json(newProject)
+        }
+    }
+    catch (err: any) {
+        return res.json({ message: "Failed to update project: " + err})
+    }
 }
 
-export async function getAllProjects() {
+/**
+ * Middleware to get all the projects in which a user is found.
+ * @param req Request object
+ * @param res Response object
+ */
+export async function getAllProjects(req: any, res: any) {
+    try {
+        const { userId } = req.body;
+        // we will query all the projects in which a user is found and send that back
+        const projects = await Project.find({
+            $or: [
+                { projectAdmins: { $in: [userId] } }, // User is a project admin
+                { teams: { $elemMatch: { teamMembers: { $in: [userId] } } } } // User is a member of any team associated with the project
+            ]
+        })
 
+        return res.status(200).json(projects)
+    }
+    catch (err: any) {
+        return res.json({ message: "Failed to fetch projects: " + err})
+    }
 }
 
-export async function getProject() {
+export async function getProject(req: any, res: any) {
 
 }
 

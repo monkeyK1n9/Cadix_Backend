@@ -46,6 +46,10 @@ const projectSchema = new mongoose.Schema({
         required: true,
         default: () => "Project-" + randomUUID()
     },
+    description: {
+        type: String,
+        default: ""
+    },
     versions: [
         { 
             type: mongoose.Schema.Types.ObjectId, 
