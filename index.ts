@@ -10,6 +10,7 @@ import { loginRouter } from './src/routes/login';
 import { registerRouter } from './src/routes/register';
 import { verifyOTPRouter } from './src/routes/verifyotp';
 import { startRouter } from './src/routes/start';
+import { versionsRouter } from './src/routes/versions';
 
 // dotenv.config();
 const app = express();
@@ -36,6 +37,7 @@ app.use("/api/v1/login", loginRouter);
 app.use("/api/v1/register", registerRouter);
 app.use("/api/v1/verifyotp", verifyOTPRouter)
 app.use("/api/v1/start", startRouter);
+app.use("/api/v1/versions", versionsRouter);
 
 
 //opening the port
