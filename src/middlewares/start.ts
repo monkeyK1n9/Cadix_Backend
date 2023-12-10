@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { storeFile } from "../lib/fileStorage";
 import { Project, ProjectTeam, ProjectVersion } from "../models/project";
-import {getDownloadURL, getStorage} from 'firebase-admin/storage';
+import { getStorage } from 'firebase-admin/storage';
 import { Message, UploadedFile } from "../models/Message";
 
 
