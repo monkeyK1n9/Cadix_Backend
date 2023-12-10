@@ -202,6 +202,20 @@ export async function getAllProjects(req: any, res: any) {
 }
 
 export async function getProject(req: any, res: any) {
+    try {
+        const { userId } = req.body;
+        const { projectId } = req.params
 
+        // we fetch the project
+        const project = await Project.findOne({
+            _id: projectId
+        });
+
+        // we check if user is authorized to see it
+
+    }
+    catch(err: any) {
+        return res.json({ message: "Failed to fetch projects: " + err})
+    }
 }
 
