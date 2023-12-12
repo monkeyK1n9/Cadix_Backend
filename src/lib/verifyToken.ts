@@ -12,8 +12,6 @@ export const verify = (req: any, res: any, next: any) => {
             (err: any, data: any) => {
                 if (err) return res.status(403).json({msg: "Token is not valid"})
                 
-                req.data = req.body;
-
                 next();
             }
         )

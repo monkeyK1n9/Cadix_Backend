@@ -12,13 +12,13 @@ import { Message, UploadedFile } from "../models/Message";
  */
 export async function createProject(req: any, res: any) {
     try {
-        const userId = req.data._id;
+        const {userId, file} = req.body;
         const fileId = randomUUID();
 
         // create project if there is a file from request or download empty ifc file and provide to the user
         let fileURL: string = "";
-        if (req.data.file) {
-            const arrayBuffer = await (req.data.file as File).arrayBuffer(); // converting blob file to bufferArray
+        if (file) {
+            const arrayBuffer = await (file as File).arrayBuffer(); // converting blob file to bufferArray
             const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
             const versionNumber = 1;
             const fileStoragePath = `${fileId}/${versionNumber}`
@@ -66,7 +66,7 @@ export async function createProject(req: any, res: any) {
 export async function deleteProject(req: any, res: any) {
     try {
         // when deleting a project, we delete the project, the related teams and all message groups
-        const { projectId, userId } = req.data;
+        const { projectId, userId } = req.body;
 
         const project = await Project.findOne({
             _id: projectId
