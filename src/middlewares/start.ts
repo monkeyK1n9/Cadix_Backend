@@ -21,7 +21,7 @@ export async function createProject(req: any, res: any) {
             const arrayBuffer = await (file as File).arrayBuffer(); // converting blob file to bufferArray
             const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
             const versionNumber = 1;
-            const fileStoragePath = `${fileId}/${versionNumber}`
+            const fileStoragePath = `${userId}/${versionNumber}`
             fileURL = await storeFile(fileId, fileStoragePath, fileData)
 
             // create the first project version while creating the project

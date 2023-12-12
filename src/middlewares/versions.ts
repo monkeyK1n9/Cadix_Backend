@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { storeFile } from "../lib/fileStorage";
+import { deleteFile, storeFile } from "../lib/fileStorage";
 import { Project, ProjectTeam, ProjectVersion } from "../models/Project";
 import { getStorage } from 'firebase-admin/storage';
 import { Message, UploadedFile } from "../models/Message";
@@ -40,7 +40,7 @@ export async function createVersion(req: any, res: any) {
             const arrayBuffer = await (file as File).arrayBuffer(); // converting blob file to bufferArray
             const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
             const versionNumber = project.versions.length + 1;
-            const fileStoragePath = `${fileId}/${versionNumber}`
+            const fileStoragePath = `${userId}/${versionNumber}`
             let fileURL = await storeFile(fileId, fileStoragePath, fileData)
 
             // create the first project version while creating the project
@@ -52,7 +52,7 @@ export async function createVersion(req: any, res: any) {
             const projectVersion = await newProjectVersion.save()
 
             // we now update the project to include the new version
-            const newProject = await Project.findOneAndDelete(
+            const newProject = await Project.findOneAndUpdate(
                 {
                     _id: projectId
                 },
@@ -80,10 +80,58 @@ export async function createVersion(req: any, res: any) {
  */
 export async function deleteVersion(req: any, res: any) {
     try {
-       // only users in the project can delete the version
+        // only users in the project can delete the version
+        const { projectId, userId, projectVersionId } = req.body;
+
+        const project = await Project.findOne(
+            {
+                _id: projectId
+            },
+            {
+                $or: [
+                    { 'projectAdmins': userId },
+                    { 'teams.teamMembers': userId },
+                    { 'teams.groupAdmins': userId }
+                ]
+            }
+        )
+
+        if(!project) {
+            throw new Error("You are not authorized to create a version in this project")
+        }
+        else {
+            // reject if it is the last remaining version of the project, only project admin can delete the project
+            if(project.versions.length == 1) {
+                throw new Error("The project must have at least one version. If you can delete the last version by deleting the project.")
+            }
+            // delete project version
+            const projectVersion = await ProjectVersion.findOneAndDelete(
+                {
+                    _id: projectVersionId
+                }
+            )
+
+            const fileStoragePath = `${userId}/${projectVersion?.versionNumber}`
+            // delete the file in firebase storage
+            await deleteFile(fileStoragePath)
+
+            // removing the project version from project document
+            const newProject = await Project.findOneAndUpdate(
+                {
+                    _id: projectId
+                },
+                {
+                    $pull: {
+                        versions: projectVersion?._id
+                    }
+                }
+            )
+
+            return res.status(200).json(newProject)
+        }
     }
     catch (err: any) {
-        
+        return res.json({ message: "Failed to delete project's version: " + err})
     }
 }
 

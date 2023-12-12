@@ -9,12 +9,12 @@ import axios from 'axios';
  * @param fileData can be string or buffer. It is the file received from POST request on client side
  * @returns fileURL string
  */
-export async function storeFile(fileID: string, fileStoragePath: string, fileData: string | Buffer) {
+export async function storeFile(fileId: string, fileStoragePath: string, fileData: string | Buffer) {
     //store file
-    await getStorage().bucket(fileStoragePath).file(fileID).save(fileData)
+    await getStorage().bucket(fileStoragePath).file(fileId).save(fileData)
 
     // get reference of stored file to obtain download URL
-    const ref = await getStorage().bucket(fileStoragePath).file(fileID)
+    const ref = await getStorage().bucket(fileStoragePath).file(fileId)
 
     return getDownloadURL(ref);
 }
@@ -43,3 +43,12 @@ export async function storeFile(fileID: string, fileStoragePath: string, fileDat
 
 //     return getDownloadURL(newFileRef);
 // }
+
+
+/**
+ * Function to delete file and its bucket in firebase storage
+ * @param fileStoragePath where the file is store to delete it, usually of the form ${userId}/.../...
+ */
+export async function deleteFile(fileStoragePath: string) {
+    await getStorage().bucket(fileStoragePath).delete();
+}
