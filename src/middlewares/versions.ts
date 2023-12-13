@@ -215,10 +215,59 @@ export async function updateVersion(req: any, res: any) {
  */
 export async function getAllVersions(req: any, res: any) {
     try {
-      
+        const { projectId, userId } = req.body;
+
+        // user updating must be authorized to do so
+        const project = await Project.findOne(
+            {
+                _id: projectId
+            },
+            {
+                $or: [
+                    { 'projectAdmins': userId },
+                    { 'teams.teamMembers': userId },
+                    { 'teams.groupAdmins': userId }
+                ]
+            }
+        )
+
+        if(!project) {
+            throw new Error("You are not authorized to update a version in this project")
+        }
+        else {
+            // we send all the project versions included in the project
+            const projectVersions = await Project.aggregate([
+                { $match: { _id: projectId } },
+                {
+                    $unwind: "$versions",
+                },
+                {
+                $lookup: {
+                    from: "ProjectVersion", // Name of the ProjectVersion collection
+                    localField: "versions",
+                    foreignField: "_id",
+                    as: "projectVersion", //given name to the result
+                },
+                },
+                {
+                    $unwind: "$projectVersion",
+                },
+                {
+                    $project: {
+                        _id: "$projectVersion._id",
+                        fileURL: "$projectVersion.fileURL",
+                        versionNumber: "$projectVersion.versionNumber",
+                        createdAt: "$projectVersion.createdAt",
+                        updatedAt: "$projectVersion.updatedAt"
+                    },
+                },
+            ])
+
+            return res.status(200).json({ projectVersions })
+        }      
     }
     catch (err: any) {
-       
+        return res.json({ message: "Failed to get all version: " + err })
     }
 }
 
