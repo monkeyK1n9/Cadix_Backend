@@ -52,7 +52,7 @@ export async function createVersion(req: any, res: any) {
             const projectVersion = await newProjectVersion.save()
 
             // we now update the project to include the new version
-            const newProject = await Project.findOneAndUpdate(
+            await Project.findOneAndUpdate(
                 {
                     _id: projectId
                 },
@@ -63,7 +63,7 @@ export async function createVersion(req: any, res: any) {
                 }
             )
 
-            return res.status(200).json(newProject);
+            return res.status(200).json(projectVersion);
         }
         
 
@@ -142,10 +142,69 @@ export async function deleteVersion(req: any, res: any) {
  */
 export async function updateVersion(req: any, res: any) {
     try {
-       
+        const { projectId, userId, projectVersionId, file } = req.body;
+
+        // user updating must be authorized to do so
+        const project = await Project.findOne(
+            {
+                _id: projectId
+            },
+            {
+                $or: [
+                    { 'projectAdmins': userId },
+                    { 'teams.teamMembers': userId },
+                    { 'teams.groupAdmins': userId }
+                ]
+            }
+        )
+
+        if(!project) {
+            throw new Error("You are not authorized to update a version in this project")
+        }
+        else {
+            // updating the version is deleting the previous version, re-uploading the file and creating another, and replacing the version id in the project
+            const oldProjectVersion = await ProjectVersion.findOneAndDelete(
+                {
+                    _id: projectVersionId
+                }
+            )
+            const fileStoragePath = `${userId}/${oldProjectVersion?.versionNumber}`
+            // delete the file in firebase storage
+            await deleteFile(fileStoragePath)
+
+            // we upload the new file
+            const fileId = randomUUID()
+            // we save the file
+            const arrayBuffer = await (file as File).arrayBuffer(); // converting blob file to bufferArray
+            const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
+            const fileURL = await storeFile(fileId, fileStoragePath, fileData)
+
+            // create the first project version while creating the project
+            const newProjectVersion = new ProjectVersion({
+                fileURL,
+                versionNumber: oldProjectVersion?.versionNumber
+            })
+
+            const projectVersion = await newProjectVersion.save()
+
+            //we now replace the old project version id with the new id in project
+            await Project.updateOne(
+                {
+                    _id: projectId,
+                    versions: projectVersionId
+                },
+                {
+                    $set: {
+                        "versions.$": projectVersion._id
+                    }
+                }
+            )
+
+            return res.status(200).json(projectVersion)
+        }
     }
     catch (err: any) {
-        
+        return res.json({ message: "Error updating project version: " + err })
     }
 }
 
