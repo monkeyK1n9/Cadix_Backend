@@ -14,15 +14,15 @@ const versionsRouter = router.Router();
 versionsRouter.post("/", verify, createVersion);
 
 // DELETE VERSION
-versionsRouter.delete("/", verify, deleteVersion);
+versionsRouter.delete("/:id", verify, deleteVersion);
 
 // UPDATE VERSION
-versionsRouter.put("/", verify, updateVersion);
+versionsRouter.put("/:id", verify, updateVersion);
 
 // GET VERSIONS
 versionsRouter.get("/", verify, getAllVersions);
 
 // GET VERSION
-versionsRouter.get("/", verify, getVersion);
+versionsRouter.get("/:id", verify, getVersion);
 
 export { versionsRouter };
