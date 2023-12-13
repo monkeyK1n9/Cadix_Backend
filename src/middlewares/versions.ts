@@ -81,7 +81,8 @@ export async function createVersion(req: any, res: any) {
 export async function deleteVersion(req: any, res: any) {
     try {
         // only users in the project can delete the version
-        const { projectId, userId, projectVersionId } = req.body;
+        const { projectId, userId } = req.body;
+        const { projectVersionId } = req.params;
 
         const project = await Project.findOne(
             {
@@ -142,7 +143,8 @@ export async function deleteVersion(req: any, res: any) {
  */
 export async function updateVersion(req: any, res: any) {
     try {
-        const { projectId, userId, projectVersionId, file } = req.body;
+        const { projectId, userId, file } = req.body;
+        const { projectVersionId } = req.params;
 
         // user updating must be authorized to do so
         const project = await Project.findOne(
@@ -278,6 +280,7 @@ export async function getAllVersions(req: any, res: any) {
  */
 export async function getVersion(req: any, res: any) {
     try {
+        
     }
     catch(err: any) {
         
