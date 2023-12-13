@@ -265,6 +265,10 @@ export async function getAllVersions(req: any, res: any) {
                 },
             ])
 
+            if (projectVersions.length == 0) {
+                throw new Error("This project has no versions")
+            }
+
             return res.status(200).json({ projectVersions })
         }      
     }
@@ -280,10 +284,44 @@ export async function getAllVersions(req: any, res: any) {
  */
 export async function getVersion(req: any, res: any) {
     try {
-        
+        const { userId, projectId } = req.body;
+        const { projectVersionId } = req.params;
+
+        // check if user is authorized to see the project version
+        const project = await Project.findOne(
+            {
+                _id: projectId
+            },
+            {
+                $or: [
+                    { 'projectAdmins': userId },
+                    { 'teams.teamMembers': userId },
+                    { 'teams.groupAdmins': userId }
+                ]
+            }
+        )
+
+        if(!project) {
+            throw new Error("You are not authorized to update a version in this project")
+        }
+        else {
+            // we send the version to the user
+            const projectVersion = await ProjectVersion.findOne(
+                {
+                    _id: projectVersionId
+                }
+            );
+
+            if (!projectVersion) {
+                throw new Error("Project version not found")
+            }
+            else {
+                return res.status(200).json(projectVersion);
+            }
+        }
     }
     catch(err: any) {
-        
+        return res.json({ message: "Failed to get the project version: " + err })
     }
 }
 
