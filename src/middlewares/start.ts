@@ -66,7 +66,8 @@ export async function createProject(req: any, res: any) {
 export async function deleteProject(req: any, res: any) {
     try {
         // when deleting a project, we delete the project, the related teams and all message groups
-        const { projectId, userId } = req.body;
+        const { userId } = req.body;
+        const { projectId } = req.params;
 
         const project = await Project.findOne({
             _id: projectId
@@ -136,7 +137,8 @@ export async function deleteProject(req: any, res: any) {
  */
 export async function updateProject(req: any, res: any) {
     try {
-        const { projectId, userId } = req.body;
+        const { userId } = req.body;
+        const { projectId } = req.params;
 
         const project = await Project.findOne({
             _id: projectId
