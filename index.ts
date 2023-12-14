@@ -55,6 +55,13 @@ io.use((socket: Socket<DefaultEventsMap, any>, next: any) => {
 //connecting sockets
 io.on('connection', (socket) => {
     console.log(`User connected with id: ${socket.id}`);
+    socket.on("send_message", async(message: any) => {
+
+    });
+
+    socket.emit("receive_message", async(message: any) => {
+
+    })
 });
 
 
