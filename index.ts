@@ -1,9 +1,12 @@
 import express from 'express';
+import http from 'http';
+import { Server, Socket } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { initializeApp } from 'firebase-admin/app';
 import { credential } from 'firebase-admin';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 //routes
 import { loginRouter } from './src/routes/login';
@@ -13,8 +16,9 @@ import { startRouter } from './src/routes/start';
 import { versionsRouter } from './src/routes/versions';
 import { teamsRouter } from './src/routes/teams';
 
-// dotenv.config();
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
@@ -42,7 +46,19 @@ app.use("/api/v1/versions", versionsRouter);
 app.use("/api/v1/teams", teamsRouter);
 
 
+//using sockets middlewares
+io.use((socket: Socket<DefaultEventsMap, any>, next: any) => {
+    // TODO: implement socket middlewares
+    next();
+})
+
+//connecting sockets
+io.on('connection', (socket) => {
+    console.log(`User connected with id: ${socket.id}`);
+});
+
+
 //opening the port
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
     console.log('Server listening on port: ' + process.env.PORT);
 })
