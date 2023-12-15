@@ -1,7 +1,7 @@
-// import { User } from "../models/User";
+import { User } from "../models/User";
 import CryptoJS from 'crypto-js';
 import jwt from 'jsonwebtoken';
-const User = require('../models/User');
+// const User = require('../models/User');
 
 /**
  * Middleware for logging a user with email and password
@@ -10,7 +10,7 @@ const User = require('../models/User');
  */
 export async function loginUser(req: any, res: any) {
     try {
-        const user = await User.findOne({
+        const user: any = await User.findOne({
             email: req.body.email
         }) 
 

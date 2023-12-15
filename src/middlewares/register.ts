@@ -1,8 +1,8 @@
-// import { User } from "../models/User";
+import { User } from "../models/User";
 import CryptoJS from 'crypto-js';
 import { sendMail } from '../lib/sendMail';
 import { UserOTPVerification } from '../models/UserOTPVerification';
-const User = require('../models/User');
+// const User = require('../models/User');
 
 /**
  * Middleware for registering a user and generating an OTP to be sent by mail and validated
@@ -11,13 +11,13 @@ const User = require('../models/User');
  */
 export async function registerUser(req: any, res: any) {
     console.log(CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY as string).toString())
-    const newUser = new User({
+    const newUser: any = new User({
         username: req.body.username,
         email: req.body.email,
         password: CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY as string).toString()
     })
 
-    let user;
+    let user: any;
 
     try {
         // reject request if user email already exists in the database and is verified, otherwise, recreate

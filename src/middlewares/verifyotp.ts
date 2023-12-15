@@ -1,7 +1,8 @@
+import { User } from '../models/User';
 import jwt from 'jsonwebtoken';
 import CryptoJS from 'crypto-js';
 import { UserOTPVerification } from '../models/UserOTPVerification';
-const User = require('../models/User');
+// const User = require('../models/User');
 
 /**
  * Middleware to verify the otp the user received by mail and proceed with authentication
@@ -65,7 +66,7 @@ export async function verifyOTP(req: any, res: any) {
                     })
 
                     // we fetch the stored user in database
-                    const storedUser = await User.findOne({
+                    const storedUser: any = await User.findOne({
                         _id: userId
                     })
                 
