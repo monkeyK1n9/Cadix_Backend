@@ -1,15 +1,19 @@
 import router from 'express';
 import { 
-    deleteUser, updateUser 
+    deleteUser, getUser, updateUser 
 } from '../middlewares/user';
+import { verify } from '../lib/verifyToken';
 
 const userRouter = router.Router();
 
 //DELETE USER
-userRouter.post("/", deleteUser);
+userRouter.post("/", verify, deleteUser);
 
 //UPDATE USER
-userRouter.post("/update", updateUser);
+userRouter.put("/:id", verify, updateUser);
+
+//GET USER
+userRouter.get("/:id", verify, getUser);
 
 
 export { userRouter }
