@@ -50,9 +50,9 @@ export async function createTeam(req: any, res: any) {
     }
 }
 
-export async function deleteTeam() {
+export async function deleteTeam(req: any, res: any) {
     try {
-
+        const { userId } = req.body;
     }
     catch(err: any) {
         

@@ -20,6 +20,7 @@ export async function createVersion(req: any, res: any) {
         const project = await Project.findOne({
             _id: projectId,
             $or: [
+                { 'createdBy': userId },
                 { 'projectAdmins': userId },
                 { 'teams.teamMembers': userId },
                 { 'teams.groupAdmins': userId }
@@ -90,6 +91,7 @@ export async function deleteVersion(req: any, res: any) {
             },
             {
                 $or: [
+                    { 'createdBy': userId },
                     { 'projectAdmins': userId },
                     { 'teams.teamMembers': userId },
                     { 'teams.groupAdmins': userId }
@@ -153,6 +155,7 @@ export async function updateVersion(req: any, res: any) {
             },
             {
                 $or: [
+                    { 'createdBy': userId },
                     { 'projectAdmins': userId },
                     { 'teams.teamMembers': userId },
                     { 'teams.groupAdmins': userId }
@@ -226,6 +229,7 @@ export async function getAllVersions(req: any, res: any) {
             },
             {
                 $or: [
+                    { 'createdBy': userId },
                     { 'projectAdmins': userId },
                     { 'teams.teamMembers': userId },
                     { 'teams.groupAdmins': userId }
@@ -294,6 +298,7 @@ export async function getVersion(req: any, res: any) {
             },
             {
                 $or: [
+                    { 'createdBy': userId },
                     { 'projectAdmins': userId },
                     { 'teams.teamMembers': userId },
                     { 'teams.groupAdmins': userId }
