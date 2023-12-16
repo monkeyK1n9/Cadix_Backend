@@ -7,7 +7,7 @@ import { User } from "../models/User";
 
 export async function deleteUser(req: any, res: any) {
     try {
-        const { userId } = req.params;
+        const { userId } = req.body;
 
         // check if user exists
         const user = await User.findOne(
