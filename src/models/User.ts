@@ -26,10 +26,6 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    projects: {
-        type: [String],
-        default: undefined,
-    },
     isVerified: {
         type: Boolean,
         default: false

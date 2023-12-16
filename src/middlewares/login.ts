@@ -33,7 +33,7 @@ export async function loginUser(req: any, res: any) {
             },
             process.env.SECRET_KEY as string, //sending the decrypting secret phrase
             {
-                expiresIn: "5d"
+                expiresIn: "90d"
             }
         )
 
