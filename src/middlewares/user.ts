@@ -69,9 +69,25 @@ export async function updateUser(req: any, res: any) {
 
 export async function getUser(req: any, res: any) {
     try {
+        const { userId } = req.params;
 
+        // try to get user
+        const user: any = await User.findOne(
+            {
+                _id: userId
+            }
+        )
+
+        if(!user) {
+            throw new Error("User not found");
+        }
+        else {
+            const { password, ...userInfo } = user._doc;
+
+            return res.status(200).json(userInfo);
+        }
     }
     catch (err: any) {
-
+        return res.json({ message: "Failed to get user: " + err });
     }
 }
