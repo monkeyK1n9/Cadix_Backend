@@ -52,7 +52,48 @@ export async function createTeam(req: any, res: any) {
 
 export async function deleteTeam(req: any, res: any) {
     try {
-        const { userId } = req.body;
+        const { userId, projectId } = req.body;
+        const { projectTeamId } = req.params;
+
+        //we check if the team exists
+        let projectTeam = await ProjectTeam.findOne(
+            { _id: projectTeamId }
+        )
+
+        if(!projectTeam) {
+            throw new Error("Project team not found");
+        }
+        else {
+            // we obtain the project
+            let project = await Project.findOne({
+                _id: projectId,
+                $or: [
+                    { 'createdBy': userId },
+                    { 'projectAdmins': userId },
+                ]
+            })
+
+            if(!project) {
+                throw new Error("Project not found or you are not allowed to delete project team");
+            }
+            else {
+                // we remove the team from the project
+                projectTeam = await ProjectTeam.findOneAndDelete(
+                    { _id: projectTeamId }
+                );
+
+                project = await Project.findOneAndUpdate(
+                    { _id: projectId },
+                    {
+                        $pull: {
+                            teams: projectTeam?._id
+                        }
+                    }
+                )
+
+                //delete all files of team
+            }
+        }
     }
     catch(err: any) {
         
