@@ -1,7 +1,6 @@
 import { randomUUID } from "crypto";
-import { storeFile } from "../lib/fileStorage";
+import { deleteFile, storeFile } from "../lib/fileStorage";
 import { Project, ProjectTeam, ProjectVersion } from "../models/Project";
-import { getStorage } from 'firebase-admin/storage';
 import { Message, UploadedFile } from "../models/Message";
 
 
@@ -105,7 +104,7 @@ export async function deleteProject(req: any, res: any) {
                     })
                 }
             }
-            await getStorage().bucket(project.createdBy).delete();
+            await deleteFile(project.createdBy)
 
             // 3- delete all project teams
             if (project.teams?.length >= 0) {
