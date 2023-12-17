@@ -210,11 +210,30 @@ export async function getAllTeams(req: any, res: any) {
     }
 }
 
-export async function getTeam() {
+export async function getTeam(req: any, res: any) {
     try {
+        const { userId, projectId } = req.body;
+        const { projectTeamId } = req.params;
 
+        // we check if project exist and if user can access the team
+        const projectTeam = await ProjectTeam.findOne(
+            {
+                _id: projectTeamId,
+                projectId,
+                teamMembers: {
+                    $in: [userId] //get only team the user is part
+                }
+            }
+        )
+
+        if(!projectTeam) {
+            throw new Error("Team not found");
+        }
+        else {
+            return res.status(200).json(projectTeam);
+        }
     }
     catch(err: any) {
-        
+        return res.json({ message: "Failed to get team: " + err });
     }
 }
