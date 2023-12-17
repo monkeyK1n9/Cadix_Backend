@@ -110,18 +110,69 @@ export async function deleteTeam(req: any, res: any) {
     }
 }
 
-export async function updateTeam() {
+export async function updateTeam(req: any, res: any) {
     try {
+        const { userId, projectId, teamMembers, groupAdmins } = req.body;
+        const { projectTeamId } = req.params;
+
+        // check project exist and user can edit team
+        const project = await Project.findOne(
+            {
+                _id: projectId
+            },
+            {
+                $or: [
+                    { 'createdBy': userId },
+                    { 'projectAdmins': userId },
+                    { 'teams.groupAdmins': userId }
+                ]
+            }
+        )
+
+        let projectTeam = await ProjectTeam.findOne(
+            {
+                _id: projectTeamId
+            }
+        )
+
+        if(!project || !projectTeam) {
+            throw new Error("Project or team not found");
+        }
+        else {
+            if(teamMembers && teamMembers.length > 0) {
+                projectTeam = await ProjectTeam.findByIdAndUpdate(
+                    {
+                        _id: projectTeamId
+                    },
+                    {
+                        teamMembers
+                    }
+                )
+            }
+
+            if(groupAdmins && groupAdmins.length > 0) {
+                projectTeam = await ProjectTeam.findByIdAndUpdate(
+                    {
+                        _id: projectTeamId
+                    },
+                    {
+                        groupAdmins
+                    }
+                )
+            }
+
+            return res.status(200).json(projectTeam);
+        }
 
     }
     catch(err: any) {
-        
+        return res.json({ message: "Failed to update team: " + err });
     }
 }
 
-export async function getAllTeams() {
+export async function getAllTeams(req: any, res: any) {
     try {
-
+        const { userId, projectId } = req.body;
     }
     catch(err: any) {
         
