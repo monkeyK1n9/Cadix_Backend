@@ -1,3 +1,4 @@
+import { Message, UploadedFile } from "../models/Message";
 import { Project, ProjectTeam } from "../models/Project";
 
 
@@ -77,6 +78,9 @@ export async function deleteTeam(req: any, res: any) {
                 throw new Error("Project not found or you are not allowed to delete project team");
             }
             else {
+                if (!project.teams.includes(projectTeamId)) {
+                    throw new Error("Team not included in the project.")
+                }
                 // we remove the team from the project
                 projectTeam = await ProjectTeam.findOneAndDelete(
                     { _id: projectTeamId }
@@ -91,12 +95,18 @@ export async function deleteTeam(req: any, res: any) {
                     }
                 )
 
-                //delete all files of team
+                //delete all messages and files of team
+                await Message.deleteMany({
+                    projectTeamId: projectTeam?._id
+                })
+                await UploadedFile.deleteMany({
+                    projectTeamId: projectTeam?._id
+                })
             }
         }
     }
     catch(err: any) {
-        
+        return res.json({ message: "Failed to delete project team: " + err });
     }
 }
 
