@@ -173,9 +173,40 @@ export async function updateTeam(req: any, res: any) {
 export async function getAllTeams(req: any, res: any) {
     try {
         const { userId, projectId } = req.body;
+
+        // we check if user is authorized to see the teams
+        const project = await Project.findOne(
+            {
+                _id: projectId
+            },
+            {
+                $or: [
+                    { 'createdBy': userId },
+                    { 'projectAdmins': userId },
+                    { 'teams.teamMembers': userId },
+                    { 'teams.groupAdmins': userId }
+                ]
+            }
+        )
+
+        if(!project) {
+            throw new Error("You are not authorized to see the project teams");
+        }
+        else {
+            const teams = await ProjectTeam.find(
+                {
+                    projectId,
+                    teamMembers: {
+                        $in: [userId] //get only teams the user is part of
+                    }
+                }
+            )
+
+            return res.status(200).json({ teams: teams });
+        }
     }
     catch(err: any) {
-        
+        return res.json({ message: "Failed to get teams: " + err });
     }
 }
 
