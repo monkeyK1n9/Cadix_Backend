@@ -32,7 +32,7 @@ export async function createProject(req: any, res: any) {
             const projectVersion = await newProjectVersion.save();
 
             const newProject = new Project({
-                filename: req.data.projectName, //provided by user
+                projectName: req.data.projectName, //provided by user
                 description: "",
                 versions: [
                     projectVersion._id, // first version on creation
@@ -136,20 +136,22 @@ export async function deleteProject(req: any, res: any) {
  */
 export async function updateProject(req: any, res: any) {
     try {
-        const { userId } = req.body;
+        const { userId, projectName, description } = req.body;
         const { projectId } = req.params;
 
-        const project = await Project.findOne({
+        const project = { projectName, description };
+
+        const oldProject = await Project.findOne({
             _id: projectId
         });
 
         // check if project exists
-        if(!project) {
+        if(!oldProject) {
             return res.status(404).json({ message: "Project not found" });
         }
 
         // only a project admin should be allowed to update the project
-        if(!project.projectAdmins?.includes(userId)) {
+        if(!oldProject.projectAdmins?.includes(userId)) {
             throw new Error("You are not authorized to update this project.");
         }
         else {
@@ -157,14 +159,16 @@ export async function updateProject(req: any, res: any) {
             for(const [key, value] of Object.entries(project)) {
                 if(key == "createdBy") continue; // we won't update the project creator
 
-                await Project.findOneAndUpdate(
-                    {
-                        _id: projectId // we filter by project Id
-                    },
-                    {
-                        [key]: value    // we update the key value pair
-                    }
-                )
+                if (key && value) {
+                    await Project.findOneAndUpdate(
+                        {
+                            _id: projectId // we filter by project Id
+                        },
+                        {
+                            [key]: value    // we update the key value pair
+                        }
+                    )
+                }
             }
 
             const newProject = await Project.findOne({

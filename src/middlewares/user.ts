@@ -1,4 +1,4 @@
-import { deleteFile } from "../lib/fileStorage";
+import { deleteFile, storeFile } from "../lib/fileStorage";
 import { Message, UploadedFile } from "../models/Message";
 import { Project, ProjectTeam, ProjectVersion } from "../models/Project";
 import { User } from "../models/User";
@@ -101,6 +101,7 @@ export async function deleteUser(req: any, res: any) {
 
 export async function updateUser(req: any, res: any) {
     try {
+        const { file, username } = req.body;
         const { userId } = req.params;
 
         // check if user exists
@@ -114,17 +115,29 @@ export async function updateUser(req: any, res: any) {
             throw new Error("User not found")
         }
         else {
-            // we update the project
-            for(const [key, value] of Object.entries(user)) {
+            // store file in db
+            let imageURL = "";
+            if(file) {
+                const arrayBuffer = await (file as File).arrayBuffer(); // converting blob file to bufferArray
+                const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
+                const fileStoragePath = `${userId}/profile`
+                imageURL = await storeFile("profile", fileStoragePath, fileData)
+            }
 
-                await User.findOneAndUpdate(
-                    {
-                        _id: userId // we filter by project Id
-                    },
-                    {
-                        [key]: value    // we update the key value pair
-                    }
-                )
+            const storeUser = { username, imageURL };
+            // we update the project
+            for(const [key, value] of Object.entries(storeUser)) {
+
+                if (key && value) {
+                    await User.findOneAndUpdate(
+                        {
+                            _id: userId // we filter by project Id
+                        },
+                        {
+                            [key]: value    // we update the key value pair
+                        }
+                    )
+                }
             }
 
             const newUser: any = await User.findOne({

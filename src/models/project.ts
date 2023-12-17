@@ -41,7 +41,7 @@ export const ProjectTeam = mongoose.model('ProjectTeam', projectTeamSchema);
 
 // to handle the effective projectSchema
 const projectSchema = new mongoose.Schema({
-    filename: {
+    projectName: {
         type: String,
         required: true,
         default: () => "Project-" + randomUUID()
