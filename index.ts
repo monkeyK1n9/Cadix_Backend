@@ -11,6 +11,8 @@ import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 //routes
 import { loginRouter } from './src/routes/login';
 import { registerRouter } from './src/routes/register';
+import { forgotPasswordRouter } from './src/routes/forgotpassword';
+import { resetPasswordRouter } from './src/routes/resetpassword';
 import { userRouter } from './src/routes/user';
 import { verifyOTPRouter } from './src/routes/verifyotp';
 import { startRouter } from './src/routes/start';
@@ -41,6 +43,8 @@ app.use(cors());
 //using the routes
 app.use("/api/v1/login", loginRouter);
 app.use("/api/v1/register", registerRouter);
+app.use("/api/v1/forgotpassword", forgotPasswordRouter);
+app.use("/api/v1/resetpasswords", resetPasswordRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/verifyotp", verifyOTPRouter);
 app.use("/api/v1/start", startRouter);
