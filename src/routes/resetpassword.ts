@@ -4,7 +4,7 @@ import { resetPassword } from '../middlewares/resetpassword';
 const resetPasswordRouter = router.Router();
 
 //CHANGE PASSWORD
-resetPasswordRouter.post("/", resetPassword)
+resetPasswordRouter.post("/:id", resetPassword)
 
 
 export { resetPasswordRouter }

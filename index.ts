@@ -44,7 +44,7 @@ app.use(cors());
 app.use("/api/v1/login", loginRouter);
 app.use("/api/v1/register", registerRouter);
 app.use("/api/v1/forgotpassword", forgotPasswordRouter);
-app.use("/api/v1/resetpasswords", resetPasswordRouter);
+app.use("/api/v1/resetpassword", resetPasswordRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/verifyotp", verifyOTPRouter);
 app.use("/api/v1/start", startRouter);

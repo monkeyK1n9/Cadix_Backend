@@ -54,7 +54,7 @@ export async function resetAccountOTP(req: any, res: any) {
                     throw new Error("Invalid code passed. Check your inbox.");
                 }
                 else {
-                    // correct otp, we redirect user to reset password
+                    // correct otp, we redirect user to reset password with the specified otp record id
                     return res.redirect(`/api/v1/resetpassword/${userOTPRecord._id}`)
                 }
             }
