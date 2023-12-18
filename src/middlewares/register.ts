@@ -9,7 +9,7 @@ import { sendOTPVerificationEmail } from '../lib/sendMail';
  * @param res response object
  */
 export async function registerUser(req: any, res: any) {
-    const { email, username, password } = req.body;
+    const { email, username, password, confirmPassword } = req.body;
 
     const newUser: any = new User({
         username,
@@ -33,6 +33,9 @@ export async function registerUser(req: any, res: any) {
                 return res.status(403).json({ message: "User already exists" });
             }
             else {
+                if (password !== confirmPassword) {
+                    throw new Error("Password and confirm password do not match.")
+                }
                 console.log("User already exists but not verified");
 
                 //if user exists and is not verified we update it
