@@ -1,7 +1,6 @@
 import { User } from "../models/User";
 import CryptoJS from 'crypto-js';
-import { sendMail } from '../lib/sendMail';
-import { UserOTPVerification } from '../models/UserOTPVerification';
+import { sendOTPVerificationEmail } from '../lib/sendMail';
 // const User = require('../models/User');
 
 /**
@@ -10,20 +9,23 @@ import { UserOTPVerification } from '../models/UserOTPVerification';
  * @param res response object
  */
 export async function registerUser(req: any, res: any) {
-    console.log(CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY as string).toString())
+    const { email, username, password } = req.body;
+
     const newUser: any = new User({
-        username: req.body.username,
-        email: req.body.email,
-        password: CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY as string).toString()
+        username,
+        email,
+        password: CryptoJS.AES.encrypt(password, process.env.SECRET_KEY as string).toString()
     })
 
     let user: any;
 
     try {
         // reject request if user email already exists in the database and is verified, otherwise, recreate
-        const checkUser = await User.findOne({
-            email: req.body.email,
-        })
+        const checkUser = await User.findOne(
+            {
+                email,
+            }
+        )
 
         if (checkUser) {
             if (checkUser.isVerified) {
@@ -36,12 +38,12 @@ export async function registerUser(req: any, res: any) {
                 //if user exists and is not verified we update it
                 user = await User.findOneAndUpdate(
                     {
-                        email: req.body.email, // we filter user by email and update it
+                        email, // we filter user by email and update it
                     }, 
                     {
-                        username: req.body.username,
-                        email: req.body.email,
-                        password: CryptoJS.AES.encrypt(req.body.password, process.env.SECRET_KEY as string).toString()
+                        username,
+                        email,
+                        password: CryptoJS.AES.encrypt(password, process.env.SECRET_KEY as string).toString()
                     },
                     {
                         new: true, // we use this to return the updated document
@@ -49,7 +51,7 @@ export async function registerUser(req: any, res: any) {
                 )
 
                 // handle account email verification
-                await sendOTPVerificationEmail(user);
+                await sendOTPVerificationEmail(user, 1);
             
 
                 return res.status(200).json({  
@@ -67,7 +69,7 @@ export async function registerUser(req: any, res: any) {
         user = await newUser.save();
 
         // handle account email verification
-        await sendOTPVerificationEmail(user);
+        await sendOTPVerificationEmail(user, 1);
        
 
         return res.status(200).json({  
@@ -84,40 +86,4 @@ export async function registerUser(req: any, res: any) {
 
         res.status(500).json({ message: "Something went wrong. Failed to create user", error: err})
     }
-}
-
-
-// send OTP to user for email validation
-async function sendOTPVerificationEmail (user: any) {
-    // generate otp
-    const otp = Math.floor((Math.random() * 9000) + 1000).toString();
-
-    console.log(process.env.SECRET_KEY);
-    // hash the otp to save in database
-    const newUserOTPVerification = new UserOTPVerification({
-        otp: CryptoJS.AES.encrypt(otp, process.env.SECRET_KEY as string).toString(),
-        userId: user._id,
-        createdAt: Date.now(),
-        expiredAt: Date.now() + 3600000 // expire code in 1 hour
-    })
-
-    // store otp in database
-    await newUserOTPVerification.save();
-
-    // send mail to user
-    await sendMail(
-        [
-            {
-                name: user.username,
-                email: user.email
-            }
-        ],
-        1, //templateId in Brevo
-        {
-            name: user.username,
-            otp: otp
-        }
-    )
-
-    console.log("Successfully sent OTP verification email")
 }
