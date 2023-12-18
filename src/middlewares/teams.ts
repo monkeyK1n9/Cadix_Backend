@@ -118,9 +118,7 @@ export async function updateTeam(req: any, res: any) {
         // check project exist and user can edit team
         const project = await Project.findOne(
             {
-                _id: projectId
-            },
-            {
+                _id: projectId,
                 $or: [
                     { 'createdBy': userId },
                     { 'projectAdmins': userId },
@@ -177,9 +175,7 @@ export async function getAllTeams(req: any, res: any) {
         // we check if user is authorized to see the teams
         const project = await Project.findOne(
             {
-                _id: projectId
-            },
-            {
+                _id: projectId,
                 $or: [
                     { 'createdBy': userId },
                     { 'projectAdmins': userId },
@@ -235,5 +231,26 @@ export async function getTeam(req: any, res: any) {
     }
     catch(err: any) {
         return res.json({ message: "Failed to get team: " + err });
+    }
+}
+
+export async function inviteMember(req: any, res: any) {
+    try {
+        const { userId, projectId, membersEmail } = req.body;
+
+        // we check if project exist and if user can invite new members
+        const project = await Project.findOne(
+            {
+                _id: projectId
+            }
+        );
+
+        if(!project) {
+            throw new Error("Project not found");
+        }
+
+    }
+    catch (err: any) {
+        return res.json({ message: "Failed to invite member: " + err });
     }
 }

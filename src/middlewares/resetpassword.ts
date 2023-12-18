@@ -69,7 +69,7 @@ export async function resetPassword(req: any, res: any) {
         }
 
     }
-    catch (err) {
+    catch (err: any) {
         return res.json({ message: "Failed to change password: " + err });
     }
 }

@@ -87,9 +87,7 @@ export async function deleteVersion(req: any, res: any) {
 
         const project = await Project.findOne(
             {
-                _id: projectId
-            },
-            {
+                _id: projectId,
                 $or: [
                     { 'createdBy': userId },
                     { 'projectAdmins': userId },
@@ -151,9 +149,7 @@ export async function updateVersion(req: any, res: any) {
         // user updating must be authorized to do so
         const project = await Project.findOne(
             {
-                _id: projectId
-            },
-            {
+                _id: projectId,
                 $or: [
                     { 'createdBy': userId },
                     { 'projectAdmins': userId },
@@ -225,9 +221,7 @@ export async function getAllVersions(req: any, res: any) {
         // user updating must be authorized to do so
         const project = await Project.findOne(
             {
-                _id: projectId
-            },
-            {
+                _id: projectId,
                 $or: [
                     { 'createdBy': userId },
                     { 'projectAdmins': userId },
@@ -294,9 +288,7 @@ export async function getVersion(req: any, res: any) {
         // check if user is authorized to see the project version
         const project = await Project.findOne(
             {
-                _id: projectId
-            },
-            {
+                _id: projectId,
                 $or: [
                     { 'createdBy': userId },
                     { 'projectAdmins': userId },
