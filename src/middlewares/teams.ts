@@ -236,17 +236,25 @@ export async function getTeam(req: any, res: any) {
 
 export async function inviteMember(req: any, res: any) {
     try {
-        const { userId, projectId, membersEmail } = req.body;
+        const { userId, projectId, projectTeamId, membersEmail } = req.body;
 
         // we check if project exist and if user can invite new members
         const project = await Project.findOne(
             {
-                _id: projectId
+                _id: projectId,
+                $or: [
+                    { 'createdBy': userId },
+                    { 'projectAdmins': userId },
+                    { 'teams.groupAdmins': userId }
+                ]
             }
         );
 
         if(!project) {
             throw new Error("Project not found");
+        }
+        else {
+            // we invite member
         }
 
     }
