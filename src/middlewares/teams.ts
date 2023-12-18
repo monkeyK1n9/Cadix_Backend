@@ -54,7 +54,7 @@ export async function createTeam(req: any, res: any) {
 export async function deleteTeam(req: any, res: any) {
     try {
         const { userId, projectId } = req.body;
-        const { projectTeamId } = req.params;
+        const projectTeamId = req.params.id;
 
         //we check if the team exists
         let projectTeam = await ProjectTeam.findOne(
@@ -113,7 +113,7 @@ export async function deleteTeam(req: any, res: any) {
 export async function updateTeam(req: any, res: any) {
     try {
         const { userId, projectId, teamMembers, groupAdmins } = req.body;
-        const { projectTeamId } = req.params;
+        const projectTeamId = req.params.id;
 
         // check project exist and user can edit team
         const project = await Project.findOne(
@@ -213,7 +213,7 @@ export async function getAllTeams(req: any, res: any) {
 export async function getTeam(req: any, res: any) {
     try {
         const { userId, projectId } = req.body;
-        const { projectTeamId } = req.params;
+        const projectTeamId = req.params.id;
 
         // we check if project exist and if user can access the team
         const projectTeam = await ProjectTeam.findOne(

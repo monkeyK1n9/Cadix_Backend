@@ -66,7 +66,7 @@ export async function deleteProject(req: any, res: any) {
     try {
         // when deleting a project, we delete the project, the related teams and all message groups
         const { userId } = req.body;
-        const { projectId } = req.params;
+        const projectId = req.params.id;
 
         const project = await Project.findOne({
             _id: projectId
@@ -137,7 +137,7 @@ export async function deleteProject(req: any, res: any) {
 export async function updateProject(req: any, res: any) {
     try {
         const { userId, projectName, description } = req.body;
-        const { projectId } = req.params;
+        const projectId = req.params.id;
 
         const project = { projectName, description };
 
@@ -214,7 +214,7 @@ export async function getAllProjects(req: any, res: any) {
 export async function getProject(req: any, res: any) {
     try {
         const { userId } = req.body;
-        const { projectId } = req.params
+        const projectId = req.params.id;
 
         // we fetch the project matching any possible userId included as a projectAdmin, teamMember of groupAdmin
         const project = await Project.findOne({

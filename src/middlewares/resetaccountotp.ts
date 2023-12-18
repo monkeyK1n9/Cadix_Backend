@@ -5,11 +5,11 @@ import { UserOTPVerification } from '../models/UserOTPVerification';
 // const User = require('../models/User');
 
 /**
- * Middleware to verify the otp the user received by mail and proceed with authentication
+ * Middleware to verify the otp the user received by mail and resetting the password
  * @param req request object
  * @param res response object
  */
-export async function verifyOTP(req: any, res: any) {
+export async function resetAccountOTP(req: any, res: any) {
     try {
 
         const {userId, otp} = req.body;
@@ -54,37 +54,8 @@ export async function verifyOTP(req: any, res: any) {
                     throw new Error("Invalid code passed. Check your inbox.");
                 }
                 else {
-                    // correct otp, we update verification status of user
-                    await User.updateOne(
-                        { _id: userId },
-                        { isVerified: true },
-                    );
-
-                    // we deleted the user's records
-                    await UserOTPVerification.deleteMany({
-                        userId
-                    })
-
-                    // we fetch the stored user in database
-                    const storedUser: any = await User.findOne({
-                        _id: userId
-                    })
-                
-                    // create an access token and sending back to the client
-                    const accessToken = jwt.sign(
-                        {
-                            id: userId
-                        },
-                        process.env.SECRET_KEY as string, //sending the decrypting secret phrase
-                        {
-                            expiresIn: "90d"
-                        }
-                    )
-                
-                    // removing password from the data we send back to the client
-                    const { password, ...userInfo } = storedUser._doc;
-                
-                    return res.status(200).json({  accessToken, ...userInfo });
+                    // correct otp, we redirect user to reset password
+                    return res.redirect(`/api/v1/resetpassword/${userOTPRecord._id}`)
                 }
             }
         }

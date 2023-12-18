@@ -102,7 +102,7 @@ export async function deleteUser(req: any, res: any) {
 export async function updateUser(req: any, res: any) {
     try {
         const { file, username } = req.body;
-        const { userId } = req.params;
+        const userId = req.params.id;
 
         // check if user exists
         const user = await User.findOne(
@@ -156,7 +156,7 @@ export async function updateUser(req: any, res: any) {
 
 export async function getUser(req: any, res: any) {
     try {
-        const { userId } = req.params;
+        const userId = req.params.id;
 
         // try to get user
         const user: any = await User.findOne(
