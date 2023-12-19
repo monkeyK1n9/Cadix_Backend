@@ -18,6 +18,7 @@ import { verifyOTPRouter } from './src/routes/verifyotp';
 import { startRouter } from './src/routes/start';
 import { versionsRouter } from './src/routes/versions';
 import { teamsRouter } from './src/routes/teams';
+import { messagesRouter } from './src/routes/messages';
 
 const app = express();
 const server = http.createServer(app);
@@ -50,6 +51,7 @@ app.use("/api/v1/verifyotp", verifyOTPRouter);
 app.use("/api/v1/start", startRouter);
 app.use("/api/v1/versions", versionsRouter);
 app.use("/api/v1/teams", teamsRouter);
+app.use("/api/v1/messages", messagesRouter);
 
 
 //using sockets middlewares
