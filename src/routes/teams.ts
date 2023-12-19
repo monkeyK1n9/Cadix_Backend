@@ -5,6 +5,7 @@ import {
     getAllTeams, 
     getTeam, 
     inviteMember, 
+    joinTeam, 
     updateTeam
 } from '../middlewares/teams';
 import { verify } from '../lib/verifyToken';
@@ -27,8 +28,11 @@ teamsRouter.get('/', verify, getAllTeams);
 // GET TEAM
 teamsRouter.get('/:id', verify, getTeam);
 
-// INVITE MEMBER
-teamsRouter.post('/invite', verify, inviteMember);
+// GET LINK TO INVITE MEMBER
+teamsRouter.get('/invite', verify, inviteMember);
+
+// JOIN TEAM FROM LINK
+teamsRouter.put('/join/:id', joinTeam);
 
 
 export { teamsRouter };

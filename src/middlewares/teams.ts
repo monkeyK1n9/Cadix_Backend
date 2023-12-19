@@ -254,11 +254,16 @@ export async function inviteMember(req: any, res: any) {
             throw new Error("Project not found");
         }
         else {
-            // we invite member
+            // we invite member by generating a join link to the team
+
         }
 
     }
     catch (err: any) {
         return res.json({ message: "Failed to invite member: " + err });
     }
+}
+
+export async function joinTeam(req: any, res: any) {
+    
 }
