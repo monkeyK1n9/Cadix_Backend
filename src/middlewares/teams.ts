@@ -271,10 +271,7 @@ export async function inviteMember(req: any, res: any) {
 
             return res.status(200).json(
                 {
-                    status: 'PENDING',
-                    data: {
-                        invitationLinkId: invitationLink._id
-                    }
+                    invitationLinkId: invitationLink._id
                 }
             )
         }
@@ -287,9 +284,50 @@ export async function inviteMember(req: any, res: any) {
 
 export async function joinTeam(req: any, res: any) {
     try {
+        const { userId } = req.body;
+        const invitationLinkId = req.params.id;
 
+        // we check if the invitation link exist
+        const invitationLink = await InvitationLink.findOne(
+            {
+                _id: invitationLinkId,
+            }
+        )
+
+        if(!invitationLink) {
+            throw new Error("Invitation link not found.");
+        }
+        else {
+            // we check if the link is still valid after the 24hours limit
+            if (invitationLink.expiredAt.getTime() < new Date().getTime()) {
+                // we delete the invitation link
+                await InvitationLink.deleteOne(
+                    {
+                        _id: invitationLinkId
+                    }
+                )
+
+                throw new Error("Invitation link expired.");
+            }
+            else {
+                // add user to the team
+                await ProjectTeam.updateOne(
+                    {
+                        _id: invitationLink.projectTeamId
+                    },
+                    {
+                        $set: {
+                            "teamMembers.$": userId
+                        }
+                    }
+                )
+
+                // redirect to projects page
+                return res.redirect("/start");
+            }
+        }
     }
     catch (err) {
-
+        return res.json({ message: "Failed to join team: " + err });
     }
 }
