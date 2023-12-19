@@ -13,7 +13,7 @@ const uploadedFileSchema = new mongoose.Schema({
     },
     fileType: {
         type: String,
-        required: true,
+        default: "",
         enum: ['image', 'video', 'other'], // TODO: modify the filetype
     },
     projectTeamId: {
