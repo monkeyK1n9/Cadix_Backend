@@ -1,3 +1,4 @@
+import { InvitationLink } from "../models/InvitationLink";
 import { Message, UploadedFile } from "../models/Message";
 import { Project, ProjectTeam } from "../models/Project";
 
@@ -236,7 +237,7 @@ export async function getTeam(req: any, res: any) {
 
 export async function inviteMember(req: any, res: any) {
     try {
-        const { userId, projectId, projectTeamId, membersEmail } = req.body;
+        const { userId, projectId, projectTeamId } = req.body;
 
         // we check if project exist and if user can invite new members
         const project = await Project.findOne(
@@ -254,8 +255,28 @@ export async function inviteMember(req: any, res: any) {
             throw new Error("Project not found");
         }
         else {
+            if(!project.teams.includes(projectTeamId)) {
+                throw new Error("This team is not a part of the project.");
+            }
             // we invite member by generating a join link to the team
+            const newInvitationLink = new InvitationLink(
+                {
+                    projectTeamId,
+                    createdAt: Date.now(),
+                    expiredAt: Date.now() + 24 * 3600000 // we expire the link after 24 hours
+                }
+            )
 
+            const invitationLink = await newInvitationLink.save();
+
+            return res.status(200).json(
+                {
+                    status: 'PENDING',
+                    data: {
+                        invitationLinkId: invitationLink._id
+                    }
+                }
+            )
         }
 
     }
@@ -265,5 +286,10 @@ export async function inviteMember(req: any, res: any) {
 }
 
 export async function joinTeam(req: any, res: any) {
-    
+    try {
+
+    }
+    catch (err) {
+
+    }
 }
