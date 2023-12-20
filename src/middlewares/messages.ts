@@ -34,7 +34,7 @@ export async function createMessage(req: any, res: any) {
                     // we save the file
                     const arrayBuffer = await (file as File).arrayBuffer(); // converting blob file to bufferArray
                     const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
-                    const fileStoragePath = `${project?.createdBy}/${projectTeamId}/messages`
+                    const fileStoragePath = `${project?.createdBy}/${projectTeamId}`
                     fileURL = await storeFile(fileId, fileStoragePath, fileData)
                 }
 
@@ -95,6 +95,10 @@ export async function deleteMessage(req: any, res: any) {
             }
         )
 
+        if(!projectTeam) {
+            throw new Error("Project Team not found");
+        }
+
         if(!message) {
             throw new Error("Message not found");
         }
@@ -107,7 +111,7 @@ export async function deleteMessage(req: any, res: any) {
 
                 // we delete the message and eventual uploaded file
                 if(message.uploadedFileId) {
-                    const uploadedFile = await UploadedFile.deleteOne(
+                    const uploadedFile = await UploadedFile.findOneAndDelete(
                         {
                             _id: message.uploadedFileId
                         }
@@ -119,19 +123,66 @@ export async function deleteMessage(req: any, res: any) {
                         }
                     )
 
-                    const fileStoragePath = `${project?.createdBy}/${projectTeamId}`
+                    const fileStoragePath = `${project?.createdBy}/${projectTeamId}`;
+                    const filename = uploadedFile?.fileId as string;
 
-                    await deleteFile(fileStoragePath)
+                    await deleteFile(fileStoragePath, filename)
+
+                    await Message.deleteOne(
+                        {
+                            _id: messageId
+                        }
+                    )
                 }
+                else {
+                    await Message.deleteOne(
+                        {
+                            _id: messageId
+                        }
+                    )
+                }
+
             }
             else {
                 // we delete the message and eventual uploaded file
+                if(message.uploadedFileId) {
+                    const uploadedFile = await UploadedFile.findOneAndDelete(
+                        {
+                            _id: message.uploadedFileId
+                        }
+                    )
+
+                    const project = await Project.findOne(
+                        {
+                            _id: projectTeam?.projectId
+                        }
+                    )
+
+                    const fileStoragePath = `${project?.createdBy}/${projectTeamId}`;
+                    const filename = uploadedFile?.fileId as string;
+
+                    await deleteFile(fileStoragePath, filename)
+
+                    await Message.deleteOne(
+                        {
+                            _id: messageId
+                        }
+                    )
+                }
+                else {
+                    await Message.deleteOne(
+                        {
+                            _id: messageId
+                        }
+                    )
+                }
 
             }
+            return res.status(200).json({ message: "Successfully deleted message" });
         }
     }
     catch (err: any) {
-
+        return res.json({ message: "Failed to delete message: " + err });
     }
 }
 
