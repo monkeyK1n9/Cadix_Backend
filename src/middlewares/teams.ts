@@ -1,3 +1,4 @@
+import { deleteFile } from "../lib/fileStorage";
 import { InvitationLink } from "../models/InvitationLink";
 import { Message, UploadedFile } from "../models/Message";
 import { Project, ProjectTeam } from "../models/Project";
@@ -103,6 +104,13 @@ export async function deleteTeam(req: any, res: any) {
                 await UploadedFile.deleteMany({
                     projectTeamId: projectTeam?._id
                 })
+
+                //delete all files in storage
+                const fileStoragePath = `${project?.createdBy}/${projectTeamId}`
+
+                await deleteFile(fileStoragePath)
+
+                return res.status(200).json(project);
             }
         }
     }
