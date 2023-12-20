@@ -78,7 +78,7 @@ export async function deleteProject(req: any, res: any) {
         }
         else {
             // check if user is authorized (a projectAdmin) to delete the project
-            if (!project.projectAdmins.includes(userId)) {
+            if (!project.projectAdmins.includes(userId) || project.createdBy !== userId) {
                 throw new Error("You are not authorized to delete this project")
             }
 
