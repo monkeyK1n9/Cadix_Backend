@@ -41,11 +41,12 @@ export async function createVersion(req: any, res: any) {
             const arrayBuffer = await (file as File).arrayBuffer(); // converting blob file to bufferArray
             const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
             const versionNumber = project.versions.length + 1;
-            const fileStoragePath = `${userId}/${versionNumber}`
+            const fileStoragePath = `${project.createdBy}/${versionNumber}`
             let fileURL = await storeFile(fileId, fileStoragePath, fileData)
 
             // create the first project version while creating the project
             const newProjectVersion = new ProjectVersion({
+                fileId,
                 fileURL,
                 versionNumber
             })
@@ -112,7 +113,7 @@ export async function deleteVersion(req: any, res: any) {
                 }
             )
 
-            const fileStoragePath = `${userId}/${projectVersion?.versionNumber}`
+            const fileStoragePath = `${project.createdBy}/${projectVersion?.versionNumber}`
             // delete the file in firebase storage
             await deleteFile(fileStoragePath)
 
@@ -169,7 +170,7 @@ export async function updateVersion(req: any, res: any) {
                     _id: projectVersionId
                 }
             )
-            const fileStoragePath = `${userId}/${oldProjectVersion?.versionNumber}`
+            const fileStoragePath = `${project.createdBy}/${oldProjectVersion?.versionNumber}`
             // delete the file in firebase storage
             await deleteFile(fileStoragePath)
 
@@ -182,6 +183,7 @@ export async function updateVersion(req: any, res: any) {
 
             // create the first project version while creating the project
             const newProjectVersion = new ProjectVersion({
+                fileId,
                 fileURL,
                 versionNumber: oldProjectVersion?.versionNumber
             })

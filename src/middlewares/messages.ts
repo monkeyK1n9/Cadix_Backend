@@ -25,15 +25,16 @@ export async function createMessage(req: any, res: any) {
             else {
                 // we create the message
                 let fileURL = "";
+                let fileId = "";
                 if(file) {
                     const project = await Project.findOne({ _id: projectTeam.projectId });
 
                     // we upload the new file
-                    const fileId = randomUUID()
+                    fileId = randomUUID()
                     // we save the file
                     const arrayBuffer = await (file as File).arrayBuffer(); // converting blob file to bufferArray
                     const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
-                    const fileStoragePath = `${project?.createdBy}/${projectTeamId}`
+                    const fileStoragePath = `${project?.createdBy}/${projectTeamId}/messages`
                     fileURL = await storeFile(fileId, fileStoragePath, fileData)
                 }
 
@@ -42,6 +43,7 @@ export async function createMessage(req: any, res: any) {
                 if(fileURL) {
                     const newUploadedFile = new UploadedFile(
                         {
+                            fileId,
                             fileURL,
                             senderId,
                             projectTeamId
@@ -56,7 +58,7 @@ export async function createMessage(req: any, res: any) {
                         projectTeamId,
                         senderId,
                         messageContent,
-                        attachment: uploadedFile ? uploadedFile._id : ""
+                        uploadedFileId: uploadedFile ? uploadedFile._id : ""
                     }
                 )
 
@@ -73,7 +75,50 @@ export async function createMessage(req: any, res: any) {
 
 export async function deleteMessage(req: any, res: any) {
     try {
+        const { userId, senderId, projectTeamId } = req.body;
+        const messageId = req.params.id;
 
+        // check if message exists
+        const message = await Message.findOne(
+            {
+                _id: messageId
+            }
+        )
+
+        const projectTeam = await ProjectTeam.findOne(
+            {
+                _id: projectTeamId,
+                $or: [
+                    { "teamMembers": userId },
+                    { "groupAdmins": userId },
+                ]
+            }
+        )
+
+        if(!message) {
+            throw new Error("Message not found");
+        }
+        else {
+            if(userId !== senderId) {
+                // then we don't permit message deletion except the userId is an admin
+                if(!projectTeam?.groupAdmins?.includes(userId)) {
+                    throw new Error("You are not allowed to delete this message");
+                }
+
+                // we delete the message and eventual uploaded file
+                if(message.uploadedFileId) {
+                    await UploadedFile.deleteOne(
+                        {
+                            _id: message.uploadedFileId
+                        }
+                    )
+                }
+            }
+            else {
+                // we delete the message and eventual uploaded file
+
+            }
+        }
     }
     catch (err: any) {
 

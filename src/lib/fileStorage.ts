@@ -46,9 +46,16 @@ export async function storeFile(fileId: string, fileStoragePath: string, fileDat
 
 
 /**
- * Function to delete file and its bucket in firebase storage
- * @param fileStoragePath where the file is store to delete it, usually of the form ${userId}/.../...
+ * Function to delete file and/or its bucket in firebase storage
+ * @param storagePath of the bucket where the files are stored to delete it, usually of the form ${userId}/.../...
+ * @param filename [optional] the name of the file. If provided deletes a particular file in a bucket
  */
-export async function deleteFile(fileStoragePath: string) {
-    await getStorage().bucket(fileStoragePath).delete();
+export async function deleteFile(storagePath: string, filename: string = "") {
+    if (!filename) {
+        await getStorage().bucket(storagePath).delete();
+    }
+    else {
+        await getStorage().bucket(storagePath).file(filename).delete();
+    }
+
 }

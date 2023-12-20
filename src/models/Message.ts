@@ -3,6 +3,9 @@ import mongoose from "mongoose";
 
 // handle if user send message with attachements
 const uploadedFileSchema = new mongoose.Schema({
+    fileId: {
+        type: String, // a generated random string to name the file. this is not the id of the uploaded file.
+    },
     fileURL: {
         type: String, // linked to file stored in storage (firebase)
         required: true,
@@ -36,7 +39,7 @@ const messageSchema = new mongoose.Schema({
     messageContent: {
         type: String,
     },
-    attachment: {
+    uploadedFileId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UploadedFile',
     },

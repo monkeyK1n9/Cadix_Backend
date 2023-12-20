@@ -3,6 +3,9 @@ import mongoose from "mongoose";
 
 // to handle different versions of a project
 const projectVersionSchema = new mongoose.Schema({
+    fileId: {
+        type: String, // a generated random string to name the file. this is not the id of the uploaded file.
+    },
     fileURL: {
         type: String,
         required: true,
