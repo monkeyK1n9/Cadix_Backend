@@ -11,11 +11,6 @@ const uploadedFileSchema = new mongoose.Schema({
         type: String, // user ID
         required: true,
     },
-    fileType: {
-        type: String,
-        default: "",
-        enum: ['image', 'video', 'other'], // TODO: modify the filetype
-    },
     projectTeamId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ProjectTeam',
@@ -41,18 +36,11 @@ const messageSchema = new mongoose.Schema({
     messageContent: {
         type: String,
     },
-    attachments: [
-        {
-            fileId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'UploadedFile',
-            },
-            fileType: {
-                type: String,
-                enum: ['image', 'video', 'other'],
-            },
-        },
-    ]
+    attachment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'UploadedFile',
+    },
+
 }, {
     timestamps: true
 });

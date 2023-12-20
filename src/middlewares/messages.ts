@@ -37,24 +37,37 @@ export async function createMessage(req: any, res: any) {
                     fileURL = await storeFile(fileId, fileStoragePath, fileData)
                 }
 
+                let uploadedFile;
+
                 if(fileURL) {
-                    const uploadFile = new UploadedFile(
+                    const newUploadedFile = new UploadedFile(
                         {
-                            
+                            fileURL,
+                            senderId,
+                            projectTeamId
                         }
                     )
+
+                    uploadedFile = await newUploadedFile.save();
                 }
 
-                const message = new Message(
+                const newMessage = new Message(
                     {
-
+                        projectTeamId,
+                        senderId,
+                        messageContent,
+                        attachment: uploadedFile ? uploadedFile._id : ""
                     }
                 )
+
+                const message = await newMessage.save();
+
+                return res.status(200).json(message);
             }
         }
     }
     catch (err: any) {
-
+        return res.json({ message: "Failed to save message: " + err });
     }
 }
 
