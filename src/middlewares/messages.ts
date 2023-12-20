@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { storeFile } from "../lib/fileStorage";
+import { deleteFile, storeFile } from "../lib/fileStorage";
 import { Project, ProjectTeam } from "../models/Project";
 import { Message, UploadedFile } from "../models/Message";
 
@@ -107,11 +107,21 @@ export async function deleteMessage(req: any, res: any) {
 
                 // we delete the message and eventual uploaded file
                 if(message.uploadedFileId) {
-                    await UploadedFile.deleteOne(
+                    const uploadedFile = await UploadedFile.deleteOne(
                         {
                             _id: message.uploadedFileId
                         }
                     )
+
+                    const project = await Project.findOne(
+                        {
+                            _id: projectTeam.projectId
+                        }
+                    )
+
+                    const fileStoragePath = `${project?.createdBy}/${projectTeamId}`
+
+                    await deleteFile(fileStoragePath)
                 }
             }
             else {
