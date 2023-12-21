@@ -337,9 +337,38 @@ export async function getAllMessages(req: any, res: any) {
 
 export async function getMessage(req: any, res: any) {
     try {
-        
+        const { userId, projectTeamId } = req.body;
+        const messageId = req.params.id;
+
+        //we check if message and group exist
+        const message = await Message.findOne(
+            {
+                _id: messageId
+            }
+        )
+
+        const projectTeam = await ProjectTeam.findOne(
+            {
+                _id: projectTeamId,
+                $or: [
+                    { "teamMembers": userId },
+                    { "groupAdmins": userId },
+                ]
+            }
+        )
+
+        if(!projectTeam) {
+            throw new Error("Project Team not found");
+        }
+
+        if(!message) {
+            throw new Error("Message not found");
+        }
+        else {
+            return res.status(200).json(message);
+        }
     }
     catch (err: any) {
-    
+        return res.json({ message: "Failed to get message: " + err });
     }
 }
