@@ -304,10 +304,34 @@ export async function updateMessage(req: any, res: any) {
 
 export async function getAllMessages(req: any, res: any) {
     try {
+        const { userId, projectTeamId } = req.body;
 
+        // we check if the team exists and user is authorized to see the messages
+        const projectTeam = await ProjectTeam.findOne(
+            {
+                _id: projectTeamId,
+                $or: [
+                    { "teamMembers": userId },
+                    { "groupAdmins": userId },
+                ]
+            }
+        );
+
+        if(!projectTeam) {
+            throw new Error("Project ")
+        }
+        else {
+            const messages = await Message.find(
+                {
+                    projectTeamId
+                }
+            )
+
+            return res.status(200).json({ messages });
+        }
     }
     catch (err: any) {
-
+        return res.json({ message: "Failed to get all messages: " + err });
     }
 }
 
