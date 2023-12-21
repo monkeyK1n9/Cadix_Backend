@@ -220,6 +220,8 @@ export async function updateMessage(req: any, res: any) {
                 throw new Error("User not authorized to update this message");
             }
             else {
+                if(!file || !messageContent) throw new Error("No data to update message");
+
                 // we create the message
                 let fileURL = "";
                 let fileId = "";
@@ -243,19 +245,39 @@ export async function updateMessage(req: any, res: any) {
                 let uploadedFile;
 
                 if(fileURL) {
-                    const newUploadedFile = new UploadedFile(
+                    uploadedFile = await UploadedFile.findByIdAndUpdate(
                         {
-                            fileId,
-                            fileURL,
-                            senderId,
-                            projectTeamId
+                            fileId
+                        },
+                        {
+                            $set: {
+                                fileURL,
+                            }
+                        },
+                        {
+                            new: true,
                         }
                     )
-
-                    uploadedFile = await newUploadedFile.save();
                 }
 
                 let newMessage;
+                // we update the uploadFile if file was present
+                if(uploadedFile) {
+                    newMessage = await Message.findOneAndUpdate(
+                        {
+                            _id: messageId
+                        },
+                        {
+                            $set: {
+                                uploadedFileId: uploadedFile._id
+                            }
+                        },
+                        {
+                            new: true
+                        }
+                    )
+                }
+                
                 // we update messageContent
                 if(messageContent) {
                     newMessage = await Message.findOneAndUpdate(
@@ -270,11 +292,13 @@ export async function updateMessage(req: any, res: any) {
                         { new: true }
                     )
                 }
+
+                return res.status(200).json(newMessage);
             }
         }
     }
     catch (err: any) {
-
+        return res.json({ message: "Failed to update message: " + err });
     }
 }
 
