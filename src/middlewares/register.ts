@@ -44,9 +44,11 @@ export async function registerUser(req: any, res: any) {
                         email, // we filter user by email and update it
                     }, 
                     {
-                        username,
-                        email,
-                        password: CryptoJS.AES.encrypt(password, process.env.SECRET_KEY as string).toString()
+                        $set: {
+                            username,
+                            email,
+                            password: CryptoJS.AES.encrypt(password, process.env.SECRET_KEY as string).toString()
+                        }
                     },
                     {
                         new: true, // we use this to return the updated document

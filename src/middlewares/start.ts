@@ -165,7 +165,9 @@ export async function updateProject(req: any, res: any) {
                             _id: projectId // we filter by project Id
                         },
                         {
-                            [key]: value    // we update the key value pair
+                            $set: {
+                                [key]: value    // we update the key value pair
+                            }
                         }
                     )
                 }

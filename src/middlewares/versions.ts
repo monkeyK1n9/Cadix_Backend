@@ -126,6 +126,9 @@ export async function deleteVersion(req: any, res: any) {
                     $pull: {
                         versions: projectVersion?._id
                     }
+                },
+                {
+                    new: true
                 }
             )
 

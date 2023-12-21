@@ -188,7 +188,90 @@ export async function deleteMessage(req: any, res: any) {
 
 export async function updateMessage(req: any, res: any) {
     try {
+        const { userId, senderId, projectTeamId, messageContent, file } = req.body;
+        const messageId = req.params.id;
 
+        // check if message exists
+        const message = await Message.findOne(
+            {
+                _id: messageId
+            }
+        )
+
+        const projectTeam = await ProjectTeam.findOne(
+            {
+                _id: projectTeamId,
+                $or: [
+                    { "teamMembers": userId },
+                    { "groupAdmins": userId },
+                ]
+            }
+        )
+
+        if(!projectTeam) {
+            throw new Error("Project Team not found");
+        }
+
+        if(!message) {
+            throw new Error("Message not found");
+        }
+        else {
+            if(userId !== senderId) {
+                throw new Error("User not authorized to update this message");
+            }
+            else {
+                // we create the message
+                let fileURL = "";
+                let fileId = "";
+                if(file) {
+                    const project = await Project.findOne({ _id: projectTeam.projectId });
+                    
+                    const oldUploadedFile = await UploadedFile.findOne(
+                        {
+                            _id: message.uploadedFileId
+                        }
+                    );
+                    // we upload the new file
+                    fileId = oldUploadedFile?.fileId as string;
+                    // we save the file
+                    const arrayBuffer = await (file as File).arrayBuffer(); // converting blob file to bufferArray
+                    const fileData = await Buffer.from(arrayBuffer); // convert arrayBuffer to buffer
+                    const fileStoragePath = `${project?.createdBy}/${projectTeamId}`
+                    fileURL = await storeFile(fileId, fileStoragePath, fileData)
+                }
+
+                let uploadedFile;
+
+                if(fileURL) {
+                    const newUploadedFile = new UploadedFile(
+                        {
+                            fileId,
+                            fileURL,
+                            senderId,
+                            projectTeamId
+                        }
+                    )
+
+                    uploadedFile = await newUploadedFile.save();
+                }
+
+                let newMessage;
+                // we update messageContent
+                if(messageContent) {
+                    newMessage = await Message.findOneAndUpdate(
+                        {
+                            _id: messageId
+                        },
+                        {
+                            $set: {
+                                messageContent
+                            }
+                        },
+                        { new: true }
+                    )
+                }
+            }
+        }
     }
     catch (err: any) {
 

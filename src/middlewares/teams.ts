@@ -94,6 +94,9 @@ export async function deleteTeam(req: any, res: any) {
                         $pull: {
                             teams: projectTeam?._id
                         }
+                    },
+                    {
+                        new: true
                     }
                 )
 
