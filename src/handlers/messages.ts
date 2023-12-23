@@ -3,7 +3,7 @@
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
-export async function joinChat(data: any, socket: Socket<DefaultEventsMap, any>) {
+export async function joinRoom(data: any, socket: Socket<DefaultEventsMap, any>) {
     const { projectTeamId } = data;
     socket.join(projectTeamId);
 }
