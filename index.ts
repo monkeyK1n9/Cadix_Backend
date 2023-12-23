@@ -9,7 +9,7 @@ import { credential } from 'firebase-admin';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 //socket handlers
-import { sendMessage } from './src/handlers/messages';
+import { receiveMessage, sendMessage } from './src/handlers/messages';
 
 //routes
 import { loginRouter } from './src/routes/login';
@@ -73,9 +73,7 @@ io.on('connection', (socket) => {
     console.log(`User connected with id: ${socket.id}`);
     socket.on("send_message", sendMessage);
 
-    socket.emit("receive_message", async(message: any) => {
-
-    })
+    socket.emit("receive_message", receiveMessage)
 });
 
 

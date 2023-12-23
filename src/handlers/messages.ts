@@ -3,6 +3,11 @@
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
+export async function joinChat(data: any, socket: Socket<DefaultEventsMap, any>) {
+    const { projectTeamId } = data;
+    socket.join(projectTeamId);
+}
+
 export async function sendMessage(data: any, socket: Socket<DefaultEventsMap, any>) {
     const { projectTeamId, message } = data;
 
@@ -10,10 +15,6 @@ export async function sendMessage(data: any, socket: Socket<DefaultEventsMap, an
     socket.to(projectTeamId).emit("receive_message", message);
 }
 
-export async function receiveMessage() {
+export async function receiveMessage(data: any, socket: Socket<DefaultEventsMap, any>) {
 
-}
-
-export async function sendNotification() {
-    
 }
