@@ -22,7 +22,12 @@ import { messagesRouter } from './src/routes/messages';
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    connectionStateRecovery: {},
+    cors: {
+        origin: process.env.CLIENT_URL
+    }
+});
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
