@@ -1,6 +1,6 @@
 // we create handlers for socker io
 
-export async function sendMessage() {
+export async function sendMessage(message: any) {
 
 }
 
