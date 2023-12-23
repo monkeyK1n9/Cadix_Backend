@@ -8,6 +8,9 @@ import { initializeApp } from 'firebase-admin/app';
 import { credential } from 'firebase-admin';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
+//socket handlers
+import { sendMessage } from './src/handlers/messages';
+
 //routes
 import { loginRouter } from './src/routes/login';
 import { registerRouter } from './src/routes/register';
@@ -68,9 +71,7 @@ io.use((socket: Socket<DefaultEventsMap, any>, next: any) => {
 //connecting sockets
 io.on('connection', (socket) => {
     console.log(`User connected with id: ${socket.id}`);
-    socket.on("send_message", async(message: any) => {
-
-    });
+    socket.on("send_message", sendMessage);
 
     socket.emit("receive_message", async(message: any) => {
 
