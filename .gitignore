@@ -4,6 +4,11 @@
 
 .env
 
+.config
+.firebaserc
+firebase-debug.log
 serviceAccountKey.json
+storage.rules
+ui-debug.log
 
 .DS_Store

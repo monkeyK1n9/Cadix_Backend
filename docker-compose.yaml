@@ -26,6 +26,7 @@ services:
 
   firebase-tools:
     image: andreysenov/firebase-tools
+    tty: true
     restart: always
     ports:
       - $FIREBASE_SUITE_UI_LOCAL_PORT:$FIREBASE_SUITE_UI_DOCKER_PORT
