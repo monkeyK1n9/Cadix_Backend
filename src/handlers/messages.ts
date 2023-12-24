@@ -25,13 +25,14 @@ export async function sendMessage(
     });
 }
 
-export async function receiveMessage(
-    io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
-    socket: Socket<DefaultEventsMap, any>
-) {
-    socket.emit("receive_message", (data: any) => {
-        const { projectTeamId, message } = data;
+// export async function receiveMessage(
+//     io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+//     socket: Socket<DefaultEventsMap, any>
+// ) {
+//     socket.emit("receive_message", (data: any) => {
+//         const { projectTeamId, message } = data;
 
-    });
+//         socket.to(projectTeamId).emit("receive_message", message);
+//     });
 
-}
+// }

@@ -9,7 +9,7 @@ import { credential } from 'firebase-admin';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 //socket handlers
-import { joinRoom, receiveMessage, sendMessage } from './src/handlers/messages';
+import { joinRoom, sendMessage } from './src/handlers/messages';
 
 //routes
 import { loginRouter } from './src/routes/login';
@@ -73,7 +73,7 @@ const onConnection = (socket: Socket<DefaultEventsMap, any>) => {
     console.log(`User connected with id: ${socket.id}`);
     joinRoom(io, socket);
     sendMessage(io, socket);
-    receiveMessage(io, socket);
+    // receiveMessage(io, socket);
 }
 
 //connecting sockets
