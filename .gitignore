@@ -5,6 +5,7 @@
 .env
 
 .config
+.bash_history
 .firebaserc
 firebase-debug.log
 serviceAccountKey.json
