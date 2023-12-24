@@ -74,11 +74,6 @@ const onConnection = (socket: Socket<DefaultEventsMap, any>) => {
     joinRoom(io, socket);
     sendMessage(io, socket);
     receiveMessage(io, socket);
-    // socket.on("join_room", joinRoom);
-
-    // socket.on("send_message", sendMessage);
-
-    // socket.emit("receive_message", receiveMessage)
 }
 
 //connecting sockets
