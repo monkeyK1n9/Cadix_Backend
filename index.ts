@@ -68,16 +68,21 @@ io.use((socket: Socket<DefaultEventsMap, any>, next: any) => {
     next();
 })
 
-//connecting sockets
-io.on('connection', (socket) => {
+// registering socket callbacks
+const onConnection = (socket: Socket<DefaultEventsMap, any>) => {
     console.log(`User connected with id: ${socket.id}`);
+    joinRoom(io, socket);
+    sendMessage(io, socket);
+    receiveMessage(io, socket);
+    // socket.on("join_room", joinRoom);
 
-    socket.on("join_room", joinRoom);
+    // socket.on("send_message", sendMessage);
 
-    socket.on("send_message", sendMessage);
+    // socket.emit("receive_message", receiveMessage)
+}
 
-    socket.emit("receive_message", receiveMessage)
-});
+//connecting sockets
+io.on('connection', onConnection);
 
 
 //opening the port

@@ -16,5 +16,6 @@ export async function sendMessage(data: any, socket: Socket<DefaultEventsMap, an
 }
 
 export async function receiveMessage(data: any, socket: Socket<DefaultEventsMap, any>) {
-
+    const { projectTeamId, message } = data;
+    
 }
