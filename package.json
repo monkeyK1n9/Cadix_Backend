@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "prod": "NODE_ENV=production node ./dist/index.js",
     "serve": "NODE_ENV=development nodemon index.ts",
     "start": "NODE_ENV=production nodemon index.ts",
     "dev-docker-compose-up": "docker-compose --env-file ./.env.development up",
