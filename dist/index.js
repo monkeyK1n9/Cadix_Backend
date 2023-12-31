@@ -33,7 +33,7 @@ const io = new socket_io_1.Server(server, {
     }
 });
 dotenv_1.default.config({ path: `.env.${process.env.NODE_ENV}` });
-const serviceAccountKey = require("./serviceAccountKey.json");
+const serviceAccountKey = require("../serviceAccountKey.json");
 //initialize firebase
 (0, app_1.initializeApp)({
     credential: firebase_admin_1.credential.cert(serviceAccountKey)
