@@ -39,8 +39,7 @@
     "sib-api-v3-sdk": "^8.5.0",
     "socket.io": "^4.7.2",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0",
-    "web-ifc": "^0.0.46"
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
