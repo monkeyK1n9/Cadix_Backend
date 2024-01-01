@@ -10,8 +10,9 @@ import jwt from 'jsonwebtoken';
  */
 export async function loginUser(req: any, res: any) {
     try {
+        const { email, password } = req.body;
         const user: any = await User.findOne({
-            email: req.body.email
+            email
         }) 
 
         if (!user) {
@@ -22,7 +23,7 @@ export async function loginUser(req: any, res: any) {
         const decryptedPassword = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY as string).toString(CryptoJS.enc.Utf8);
 
         // check for invalid password
-        if (decryptedPassword !== req.body.password) {
+        if (decryptedPassword !== password) {
             return res.status(401).json({ message: "Wrong email or password" });
         }
 
@@ -38,7 +39,7 @@ export async function loginUser(req: any, res: any) {
         )
 
         // removing password from the data we send back to the client
-        const { password, ...userInfo } = user._doc;
+        const { password: storedPassword, ...userInfo } = user._doc;
 
         return res.status(200).json({  accessToken, ...userInfo });
     }
